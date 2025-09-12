@@ -15,11 +15,16 @@
 
   <h2>Login</h2>
   <form id="loginForm">
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
+    <input type="email" id="email" placeholder="Enter your email" autocomplete="email" required />
+    <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required />
     <button type="submit">Login</button>
   </form>
-  <a href="./forgot-password.html">Forgot Password?</a>
+
+  <p style="text-align:center; margin-top:10px;">
+    <a href="./forgot-password.html">🔑 Forgot your password?</a>
+  </p>
+
+  <div id="loginMessage" style="text-align:center; margin-top:15px; color:red; font-size:0.9em;"></div>
 
   <script type="module" src="../js/services/auth.js"></script>
 </body>

@@ -15,12 +15,12 @@
 
   <h2>My Tasks</h2>
   <form id="taskForm">
-    <input type="text" id="title" placeholder="Task Title" required />
-    <textarea id="details" placeholder="Task Detail" required></textarea>
-    <input type="datetime-local" id="datetime" required />
+    <input type="text" id="title" placeholder="Task Title" maxlength="50" required />
+    <textarea id="details" placeholder="Task Detail" maxlength="500" required></textarea>
     <select id="status" required>
-      <option value="pending">⏳ Pending</option>
-      <option value="done">✅ Done</option>
+      <option value="Por Hacer">⏳ Por Hacer</option>
+      <option value="Haciendo">⚡ Haciendo</option>
+      <option value="Hecho">✅ Hecho</option>
     </select>
     <button type="submit">Add Task</button>
   </form>
