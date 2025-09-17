@@ -1,4 +1,6 @@
 // Aplicación principal
+import ApiService from './api.js';
+
 const App = {
   async init() {
     // Mostrar pantalla de carga

@@ -74,8 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async checkExistingAuth() {
             console.log('Verificando token existente...');
+            // Esperar a que ApiService esté disponible
+            if (!window.ApiService) {
+                console.log('ApiService no está disponible aún, esperando...');
+                return;
+            }
+            
             try {
-                const result = await ApiService.verifyToken();
+                const result = await window.ApiService.verifyToken();
                 console.log('Resultado de verifyToken:', result);
                 // Si ya está autenticado, redirigir al dashboard
                 console.log('Usuario ya autenticado, redirigiendo al dashboard');
@@ -129,15 +135,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
 
                 case 'email':
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    isValid = emailRegex.test(field.value);
-                    errorMessage = isValid ? '' : 'Ingrese un email válido';
+                    if (this.isLoginMode) {
+                        // En login: solo verificar formato básico
+                        isValid = field.value.includes('@') && field.value.length > 3;
+                        errorMessage = isValid ? '' : 'Email requerido';
+                    } else {
+                        // En registro: validación completa
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        isValid = emailRegex.test(field.value);
+                        errorMessage = isValid ? '' : 'Ingrese un email válido';
+                    }
                     break;
 
                 case 'password':
-                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-                    isValid = passwordRegex.test(field.value);
-                    errorMessage = isValid ? '' : 'Mínimo 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial';
+                    if (this.isLoginMode) {
+                        // En login: solo verificar que no esté vacío
+                        isValid = field.value.length > 0;
+                        errorMessage = isValid ? '' : 'Contraseña requerida';
+                    } else {
+                        // En registro: validación completa
+                        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                        isValid = passwordRegex.test(field.value);
+                        errorMessage = isValid ? '' : 'Mínimo 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial';
+                    }
                     break;
 
                 case 'confirmPassword':
@@ -207,16 +227,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 3000);
 
             try {
+                // Verificar que ApiService esté disponible
+                if (!window.ApiService) {
+                    throw new Error('Servicio no disponible. Recarga la página.');
+                }
+
                 let response;
                 if (this.isLoginMode) {
                     console.log('Attempting login...');
-                    response = await ApiService.login({
+                    response = await window.ApiService.login({
                         email: data.email,
                         password: data.password
                     });
                 } else {
                     console.log('Attempting registration...');
-                    response = await ApiService.register({
+                    response = await window.ApiService.register({
                         firstName: data.firstName,
                         lastName: data.lastName,
                         email: data.email,
@@ -231,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Autenticación exitosa, redirigir al dashboard
                 setTimeout(() => {
                     Utils.navigateTo('dashboard.html');
-                }, 200); // Redirección rápida ≤ 500ms
+                }, 500); // Delay de 500ms
                 
             } catch (error) {
                 clearTimeout(timeoutId);

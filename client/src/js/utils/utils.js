@@ -35,10 +35,17 @@ const Utils = {
   // Verificar autenticación y redirigir si es necesario
   async checkAuth() {
     try {
-      await ApiService.verifyToken();
+      console.log('Verificando autenticación...');
+      await window.ApiService.verifyToken();
+      console.log('Autenticación válida');
       return true;
     } catch (error) {
-      this.navigateTo('./auth.html');
+      console.log('Autenticación fallida:', error.message);
+      // Solo redirigir si no estamos ya en la página de auth
+      if (!window.location.pathname.includes('auth.html')) {
+        console.log('Redirigiendo a auth.html');
+        this.navigateTo('./auth.html');
+      }
       return false;
     }
   },
@@ -48,3 +55,6 @@ const Utils = {
     return tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 };
+
+// Hacer Utils disponible globalmente
+window.Utils = Utils;

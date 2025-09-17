@@ -1,4 +1,6 @@
 // Manejo de autenticación
+import ApiService from './api.js';
+
 const AuthManager = {
   isLoginMode: true,
 

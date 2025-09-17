@@ -1,5 +1,5 @@
 // API Service para comunicación con el backend
-const API_BASE_URL = import.meta.env.API_BASE_URL || 'http://localhost:4000/api/v1';
+const API_BASE_URL = 'https://pi-proyectobackend.onrender.com/api/v1';
 
 const ApiService = {
   async request(endpoint, options = {}) {
@@ -104,3 +104,6 @@ const ApiService = {
     return await this.request(`/tasks/${id}`);
   }
 };
+
+// Hacer ApiService disponible globalmente
+window.ApiService = ApiService;

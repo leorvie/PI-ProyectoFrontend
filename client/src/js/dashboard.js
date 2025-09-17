@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         async loadUserProfile() {
             try {
-                const userData = await ApiService.getProfile();
+                const userData = await window.ApiService.getProfile();
                 this.user = userData;
                 this.updateUserGreeting();
             } catch (error) {
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         async loadTasks() {
             try {
-                this.tasks = await ApiService.getTasks();
+                this.tasks = await window.ApiService.getTasks();
                 this.renderTasks();
             } catch (error) {
                 console.error('Error loading tasks:', error);
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (task) {
                 const newStatus = task.status === 'Hecho' ? 'Por Hacer' : 'Hecho';
                 try {
-                    await ApiService.updateTask(taskId, { status: newStatus });
+                    await window.ApiService.updateTask(taskId, { status: newStatus });
                     task.status = newStatus;
                     this.renderTasks();
                     Utils.showSuccess(`Tarea marcada como ${newStatus}`);
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
                 try {
-                    await ApiService.deleteTask(taskId);
+                    await window.ApiService.deleteTask(taskId);
                     this.tasks = this.tasks.filter(t => t._id !== taskId);
                     this.renderTasks();
                     Utils.showSuccess('Tarea eliminada exitosamente');

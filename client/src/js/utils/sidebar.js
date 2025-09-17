@@ -42,7 +42,7 @@ class Sidebar {
 
     async loadUserInfo() {
         try {
-            const userData = await ApiService.getProfile();
+            const userData = await window.ApiService.getProfile();
             this.updateUserInfo(userData.username || userData.email || 'Usuario');
         } catch (error) {
             console.error('Error loading user info:', error);
@@ -65,7 +65,7 @@ class Sidebar {
     async handleLogout() {
         try {
             // Usar el ApiService en lugar de fetch directo
-            await ApiService.logout();
+            await window.ApiService.logout();
             
             // Limpiar cualquier dato local si es necesario
             localStorage.clear();
