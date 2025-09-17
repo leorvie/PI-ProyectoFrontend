@@ -44,7 +44,7 @@ const Utils = {
       // Solo redirigir si no estamos ya en la página de auth
       if (!window.location.pathname.includes('auth.html')) {
         console.log('Redirigiendo a auth.html');
-        this.navigateTo('./auth.html');
+  this.navigateTo('/auth.html');
       }
       return false;
     }

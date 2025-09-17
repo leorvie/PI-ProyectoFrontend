@@ -48,7 +48,7 @@ class Sidebar {
             console.error('Error loading user info:', error);
             // Si hay error de autenticación, redirigir a auth
             if (error.message.includes('401') || error.message.includes('Unauthorized')) {
-                window.location.href = './auth.html';
+                window.location.href = '/auth.html';
             } else {
                 this.updateUserInfo('Usuario');
             }
@@ -72,11 +72,11 @@ class Sidebar {
             sessionStorage.clear();
             
             // Redirigir a la página de login con parámetro para mostrar mensaje
-            window.location.href = './auth.html?logout=true';
+            window.location.href = '/auth.html?logout=true';
         } catch (error) {
             console.error('Error during logout:', error);
             // En caso de error, aún así redirigir
-            window.location.href = './auth.html?logout=true';
+            window.location.href = '/auth.html?logout=true';
         }
     }
 
