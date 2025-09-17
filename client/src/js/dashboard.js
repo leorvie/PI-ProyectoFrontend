@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="empty-state">
                     <h3>No tienes tareas aún</h3>
                     <p>¡Crea tu primera tarea para comenzar!</p>
-                    <a href="create-task.html" class="btn btn-primary">Nueva Tarea</a>
+                    <a href="/create-task.html" class="btn btn-primary">Nueva Tarea</a>
                 </div>
             `;
         },
