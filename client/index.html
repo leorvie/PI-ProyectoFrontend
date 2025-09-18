@@ -49,11 +49,11 @@
             try {
                 await ApiService.getProfile();
                 // Usuario autenticado, ir al dashboard
-                window.location.href = './pages/dashboard.html';
+                window.location.href = './src/pages/dashboard.html';
             } catch (error) {
                 console.error('Error checking auth:', error);
                 // Usuario no autenticado, ir a login
-                window.location.href = './pages/auth.html';
+                window.location.href = './src/pages/auth.html';
             }
         }
 
