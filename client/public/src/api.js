@@ -1,16 +1,23 @@
 // API Service para comunicación con el backend
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1';
+
+// Detectar si estamos en producción o desarrollo
+const isProduction = import.meta.env.MODE === "production";
+
+// Selección automática de la URL base según el entorno
+const API_BASE_URL = isProduction
+  ? import.meta.env.VITE_API_URL_PROD
+  : import.meta.env.VITE_API_URL_LOCAL;
 
 const ApiService = {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const config = {
+      ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
+        ...(options.headers || {}),
       },
-      credentials: 'include', // Incluir cookies
-      ...options,
+      credentials: 'include', // Incluir cookies para autenticación, queda fijo y no se sobreescribe
     };
 
     console.log('API Request:', url, config); // Debug log
