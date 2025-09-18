@@ -79,13 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('ApiService no está disponible aún, esperando...');
                 return;
             }
-            
             try {
                 const result = await window.ApiService.verifyToken();
                 console.log('Resultado de verifyToken:', result);
-                // Si ya está autenticado, redirigir al dashboard
-                console.log('Usuario ya autenticado, redirigiendo al dashboard');
-                Utils.navigateTo('/dashboard.html');
+                // Solo redirigir si la respuesta indica autenticación válida
+                if (result && (result.success === true || result.auth === true || result === true)) {
+                    console.log('Usuario autenticado, redirigiendo al dashboard');
+                    Utils.navigateTo('/dashboard.html');
+                } else {
+                    console.log('No autenticado, mostrar login');
+                }
             } catch (error) {
                 // No hay autenticación válida, continuar con login
                 console.log('No hay autenticación válida:', error.message);
