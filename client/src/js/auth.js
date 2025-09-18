@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Resultado de verifyToken:', result);
                 // Si ya está autenticado, redirigir al dashboard
                 console.log('Usuario ya autenticado, redirigiendo al dashboard');
-                Utils.navigateTo('/dashboard.html');
+                Utils.navigateTo('/src/pages/dashboard.html');
             } catch (error) {
                 // No hay autenticación válida, continuar con login
                 console.log('No hay autenticación válida:', error.message);
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Autenticación exitosa, redirigir al dashboard
                 setTimeout(() => {
-                    Utils.navigateTo('/dashboard.html');
+                    Utils.navigateTo('/src/pages/dashboard.html');
                 }, 500); // Delay de 500ms
                 
             } catch (error) {
