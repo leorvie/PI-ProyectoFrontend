@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestor de Tareas</title>
-    <link rel="stylesheet" href="./css/variables.css">
+    <link rel="stylesheet" href="public/css/variables.css">
     <style>
         .redirect-container {
             display: flex;
@@ -49,11 +49,11 @@
             try {
                 await ApiService.getProfile();
                 // Usuario autenticado, ir al dashboard
-                window.location.href = 'dashboard.html';
+                window.location.href = 'public/dashboard.html';
             } catch (error) {
                 console.error('Error checking auth:', error);
                 // Usuario no autenticado, ir a login
-                window.location.href = 'auth.html';
+                window.location.href = 'public/auth.html';
             }
         }
 
