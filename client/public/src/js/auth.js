@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     submitBtn.disabled = false;
                     Utils.showError('auth-error', 'Tiempo de espera agotado. Intenta nuevamente.');
                 }
-            }, 3000);
+            }, 50000);
 
             try {
                 // Verificar que ApiService esté disponible
