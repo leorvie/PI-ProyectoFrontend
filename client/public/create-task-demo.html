@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nueva Tarea - Gestor de Tareas</title>
-    <link rel="stylesheet" href="../src/css/variables.css">
-    <link rel="stylesheet" href="../src/css/sidebar.css">
-    <link rel="stylesheet" href="../src/css/create-task.css">
+    <title>Demo - Nueva Tarea</title>
+    <link rel="stylesheet" href="./css/variables.css">
+    <link rel="stylesheet" href="./css/sidebar.css">
+    <link rel="stylesheet" href="./css/create-task.css">
 </head>
 <body>
     <div class="app-layout">
@@ -14,19 +14,19 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h2>Task Manager</h2>
-                <div class="user-info" id="userInfo">
-                    Cargando...
+                <div class="user-info">
+                    ¡Hola, Usuario Demo!
                 </div>
             </div>
             
             <div class="sidebar-nav">
-                <a href="dashboard.html" class="nav-item">
+                <a href="dashboard-demo.html" class="nav-item">
                     <svg class="nav-icon" viewBox="0 0 24 24">
                         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     Dashboard
                 </a>
-                <a href="create-task.html" class="nav-item active">
+                <a href="#" class="nav-item active">
                     <svg class="nav-icon" viewBox="0 0 24 24">
                         <path d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -35,7 +35,7 @@
             </div>
             
             <div class="sidebar-footer">
-                <button id="logout-btn" class="logout-btn">
+                <button class="logout-btn" onclick="alert('Demo - Logout functionality')">
                     <svg class="nav-icon" viewBox="0 0 24 24">
                         <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -61,7 +61,7 @@
                     <h1>Nueva Tarea</h1>
                 </header>
 
-                <form id="task-form" class="create-task-form">
+                <form class="create-task-form" onsubmit="showSuccessModal(event)">
                     <div class="form-group">
                         <label for="task-title">Título de la tarea *</label>
                         <input type="text" id="task-title" name="title" required maxlength="50" 
@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" id="cancel-btn" class="btn btn-secondary">
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">
                             Cancelar
                         </button>
                         <button type="submit" class="btn btn-primary">
@@ -94,8 +94,6 @@
                         </button>
                     </div>
                 </form>
-
-                <div id="task-error" class="error-message"></div>
             </div>
         </main>
     </div>
@@ -106,16 +104,76 @@
             <h3>¡Tarea creada exitosamente!</h3>
             <p>Tu tarea ha sido creada y guardada correctamente.</p>
             <div class="modal-actions">
-                <button id="go-dashboard" class="btn btn-primary">Ver en Dashboard</button>
-                <button id="create-another" class="btn btn-secondary">Crear otra tarea</button>
+                <button class="btn btn-primary" onclick="goToDashboard()">Ver en Dashboard</button>
+                <button class="btn btn-secondary" onclick="createAnother()">Crear otra tarea</button>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="../src/js/services/api.js"></script>
-    <script src="../src/js/utils/utils.js"></script>
-    <script src="../src/js/utils/sidebar.js"></script>
-    <script src="../src/js/create-task.js"></script>
+    <script>
+        // Mobile menu functionality
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        });
+
+        document.getElementById('sidebarOverlay').addEventListener('click', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+        });
+
+        // Character counters
+        document.getElementById('task-title').addEventListener('input', function() {
+            updateCharCounter(this, 50);
+        });
+
+        document.getElementById('task-details').addEventListener('input', function() {
+            updateCharCounter(this, 500);
+        });
+
+        function updateCharCounter(input, maxLength) {
+            const counter = input.nextElementSibling;
+            const length = input.value.length;
+            counter.textContent = `${length}/${maxLength} caracteres`;
+            
+            if (length > maxLength * 0.8) {
+                counter.classList.add('warning');
+            } else {
+                counter.classList.remove('warning');
+            }
+            
+            if (length >= maxLength) {
+                counter.classList.add('danger');
+            } else {
+                counter.classList.remove('danger');
+            }
+        }
+
+        function showSuccessModal(event) {
+            event.preventDefault();
+            document.getElementById('success-modal').style.display = 'flex';
+        }
+
+        function goToDashboard() {
+            window.location.href = 'dashboard-demo.html';
+        }
+
+        function createAnother() {
+            document.getElementById('success-modal').style.display = 'none';
+            clearForm();
+        }
+
+        function clearForm() {
+            document.querySelector('form').reset();
+            document.querySelectorAll('.char-counter').forEach(counter => {
+                counter.textContent = counter.textContent.replace(/\d+/, '0');
+                counter.classList.remove('warning', 'danger');
+            });
+        }
+    </script>
 </body>
 </html>
