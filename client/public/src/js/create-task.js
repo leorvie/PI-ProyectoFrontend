@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
 
         goToDashboard() {
-            Utils.navigateTo('/src/pages/dashboard.html');
+            Utils.navigateTo('/dashboard.html');
         },
 
         createAnother() {
