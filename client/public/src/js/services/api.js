@@ -1,5 +1,5 @@
 // API Service para comunicación con el backend
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+const API_BASE_URL = 'https://pi-proyectobackend.onrender.com/api/v1';
 
 const ApiService = {
   async request(endpoint, options = {}) {
