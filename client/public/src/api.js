@@ -1,5 +1,13 @@
 // API Service para comunicación con el backend
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1';
+
+// Detectar si estamos en producción o desarrollo
+const isProduction = import.meta.env.MODE === "production";
+
+// Selección automática de la URL base según el entorno
+const API_BASE_URL = isProduction
+  ? import.meta.env.VITE_API_URL_PROD
+  : import.meta.env.VITE_API_URL_LOCAL;
+
 const ApiService = {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
