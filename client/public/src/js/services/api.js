@@ -30,6 +30,7 @@ const ApiService = {
         data = await response.text();
       }
 
+      
       console.log('API Response data:', data); // Debug log
 
       if (!response.ok) {
@@ -102,6 +103,19 @@ const ApiService = {
 
   async getTask(id) {
     return await this.request(`/tasks/${id}`);
+  },
+
+  async deleteTask(id) {
+    return await this.request(`/tasks/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async updateTask(id, taskData) {
+    return await this.request(`/tasks/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(taskData)
+    });
   }
 };
 
