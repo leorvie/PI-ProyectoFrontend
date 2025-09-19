@@ -81,12 +81,41 @@ const ApiService = {
     }
   },
 
+  async forgotPassword(email) {
+  return await this.request('/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+},
+
+async resetPassword(token, newPassword) {
+  return await this.request(`/reset-password/${token}`, {
+    method: 'POST',
+    body: JSON.stringify({ password: newPassword }),
+  });
+},
+
   async verifyToken() {
     return await this.request('/verify');
   },
 
   async getProfile() {
     return await this.request('/profile');
+  },
+
+  // Recuperación de contraseña
+  async forgotPassword(email) {
+    return await this.request('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  async resetPassword(token, password) {
+    return await this.request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
+    });
   },
 
   // Métodos de tareas
