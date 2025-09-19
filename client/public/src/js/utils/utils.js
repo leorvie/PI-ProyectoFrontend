@@ -53,6 +53,34 @@ const Utils = {
   // Ordenar tareas por fecha de creación (más recientes primero)
   sortTasksByDate(tasks) {
     return tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  // Mostrar pantalla de carga
+  showLoading() {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.display = 'flex';
+    }
+  },
+
+  // Ocultar pantalla de carga
+  hideLoading() {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.display = 'none';
+    }
+  },
+
+  // Mostrar mensaje de error
+  showErrorMessage(message) {
+    // Puedes personalizar cómo mostrar el mensaje de error
+    alert(message);
+  },
+
+  // Mostrar mensaje de éxito
+  showSuccessMessage(message) {
+    // Puedes personalizar cómo mostrar el mensaje de éxito
+    alert(message);
   }
 };
 
