@@ -89,7 +89,7 @@ const ApiService = {
 },
 
 async resetPassword(token, newPassword) {
-  return await this.request(`/reset-password/${token}`, {
+  return await this.request(`/reset-password?token=${token}`, {
     method: 'POST',
     body: JSON.stringify({ password: newPassword }),
   });
@@ -103,20 +103,6 @@ async resetPassword(token, newPassword) {
     return await this.request('/profile');
   },
 
-  // Recuperación de contraseña
-  async forgotPassword(email) {
-    return await this.request('/auth/forgot-password', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    });
-  },
-
-  async resetPassword(token, password) {
-    return await this.request('/auth/reset-password', {
-      method: 'POST',
-      body: JSON.stringify({ token, password }),
-    });
-  },
 
   // Métodos de tareas
   async getTasks() {
