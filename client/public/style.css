@@ -148,6 +148,22 @@ body {
   color: var(--primary-hover);
 }
 
+.extra-links {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.forgot-password {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
 /* Dashboard Styles */
 .dashboard {
   background: var(--background-color);
