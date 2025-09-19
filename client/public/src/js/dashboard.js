@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         user: null,
         currentFilter: 'all',
         currentView: 'kanban', // Vista por defecto Kanban
+        currentTaskId: null, // Para tracking de la tarea actual en edición/eliminación
 
         async init() {
             // Verificar autenticación
@@ -172,6 +173,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="kanban-task-date">${date}</span>
                         <span class="kanban-task-status">${task.status}</span>
                     </div>
+                    <div class="task-actions">
+                        <button class="btn-icon edit-task" title="Editar tarea">✏️</button>
+                        <button class="btn-icon delete-task" title="Eliminar tarea">🗑️</button>
+                    </div>
                 </div>
             `;
         },
@@ -263,8 +268,56 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
 
         editTask(e) {
-            // Por ahora, solo mostrar alert
-            Utils.showInfo('Funcionalidad de edición en desarrollo');
+            const taskElement = e.target.closest('[data-task-id]');
+            const taskId = taskElement.dataset.taskId;
+            const task = this.tasks.find(t => t._id === taskId);
+            
+            if (task) {
+                // Abrir el modal de edición
+                const modal = document.getElementById('edit-task-modal');
+                const form = document.getElementById('edit-task-form');
+                const titleInput = document.getElementById('edit-title');
+                const detailsInput = document.getElementById('edit-details');
+                const statusInput = document.getElementById('edit-status');
+
+                // Establecer los valores actuales
+                titleInput.value = task.title;
+                detailsInput.value = task.details || '';
+                statusInput.value = task.status;
+
+                // Guardar el ID de la tarea actual
+                this.currentTaskId = taskId;
+
+                // Mostrar el modal
+                modal.style.display = 'flex';
+
+                // Configurar el evento de envío del formulario
+                form.onsubmit = async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    const updatedTask = {
+                        title: formData.get('title'),
+                        details: formData.get('details'),
+                        status: formData.get('status')
+                    };
+
+                    try {
+                        await window.ApiService.updateTask(taskId, updatedTask);
+                        modal.style.display = 'none';
+                        await this.loadTasks(); // Recargar las tareas
+                        Utils.showSuccess('Tarea actualizada exitosamente');
+                    } catch (error) {
+                        console.error('Error updating task:', error);
+                        Utils.showError('Error al actualizar la tarea');
+                    }
+                };
+
+                // Configurar el botón de cancelar
+                const cancelBtn = document.getElementById('cancel-edit');
+                cancelBtn.onclick = () => {
+                    modal.style.display = 'none';
+                };
+            }
         },
 
         hideLoading() {
