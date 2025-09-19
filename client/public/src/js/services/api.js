@@ -123,8 +123,15 @@ const ApiService = {
       method: 'PUT',
       body: JSON.stringify(taskData)
     });
-  }
-};
+  },
 
+async forgotPassword(email) {
+    return await this.request('/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    });
+
+}
+}
 // Hacer ApiService disponible globalmente
 window.ApiService = ApiService;
