@@ -89,6 +89,13 @@ const ApiService = {
     return await this.request('/profile');
   },
 
+  async updateProfile(profileData) {
+    return await this.request('/profile/edit', {
+      method: 'PUT',
+      body: JSON.stringify(profileData)
+    });
+  },
+
   // Métodos de tareas
   async getTasks() {
     return await this.request('/tasks');
