@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./css/variables.css">
     <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="./css/modal.css">
 </head>
 <body>
     <div class="app-layout">
@@ -132,10 +133,60 @@
         <p>Cargando tareas...</p>
     </div>
 
+    <!-- Edit Task Modal -->
+    <div id="edit-task-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Editar Tarea</h2>
+            <form id="edit-task-form">
+                <div class="form-group">
+                    <label for="edit-title">Título</label>
+                    <input type="text" id="edit-title" name="title" required maxlength="50">
+                    <div class="char-counter"></div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-details">Detalles</label>
+                    <textarea id="edit-details" name="details" rows="4" maxlength="500"></textarea>
+                    <div class="char-counter"></div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-status">Estado</label>
+                    <select id="edit-status" name="status" required>
+                        <option value="Por Hacer">Por Hacer</option>
+                        <option value="Haciendo">Haciendo</option>
+                        <option value="Hecho">Hecho</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-edit">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-task-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Eliminar Tarea</h2>
+            <p>¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="confirm-delete">Eliminar</button>
+                <button class="btn btn-secondary" id="cancel-delete">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="./src/js/services/api.js"></script>
     <script src="./src/js/utils/utils.js"></script>
+    <script>
+        // Asegurarnos de que ApiService esté disponible
+        if (!window.ApiService) {
+            window.location.href = '/auth.html?error=service_unavailable';
+        }
+    </script>
     <script src="./src/js/utils/sidebar.js"></script>
+    <script src="./src/js/task-management.js"></script>
     <script src="./src/js/dashboard.js"></script>
 </body>
 </html>

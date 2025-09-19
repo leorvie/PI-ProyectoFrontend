@@ -30,6 +30,7 @@ const ApiService = {
         data = await response.text();
       }
 
+      
       console.log('API Response data:', data); // Debug log
 
       if (!response.ok) {
@@ -50,7 +51,7 @@ const ApiService = {
       lastname: userData.lastName,
       email: userData.email,
       password: userData.password,
-      age: userData.age || 18
+      age: parseInt(userData.age) || 18
     };
     
     return await this.request('/register', {
@@ -102,6 +103,19 @@ const ApiService = {
 
   async getTask(id) {
     return await this.request(`/tasks/${id}`);
+  },
+
+  async deleteTask(id) {
+    return await this.request(`/tasks/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async updateTask(id, taskData) {
+    return await this.request(`/tasks/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(taskData)
+    });
   }
 };
 
