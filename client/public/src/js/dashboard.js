@@ -163,15 +163,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
 
         createKanbanTaskHTML(task) {
-            const date = new Date(task.createdAt || task.updatedAt).toLocaleDateString('es-ES');
+            const createdDate = new Date(task.createdAt || task.updatedAt).toLocaleDateString('es-ES');
+            
+            // Fecha de vencimiento con hora
+            let dueDateHTML = '';
+            if (task.date) {
+                const dueDate = new Date(task.date);
+                const today = new Date();
+                const isOverdue = dueDate < today && task.status !== 'Hecho';
+                
+                // Formatear fecha con hora
+                const formatOptions = { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                };
+                const dateTimeFormatted = dueDate.toLocaleString('es-ES', formatOptions);
+                
+                dueDateHTML = `
+                    <span class="kanban-task-due-date ${isOverdue ? 'overdue' : ''}" title="Fecha límite">
+                        <svg class="task-icon" viewBox="0 0 24 24" width="14" height="14">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z"/>
+                            <path d="M12.5 7H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/>
+                        </svg>
+                        ${dateTimeFormatted}
+                    </span>
+                `;
+            }
             
             return `
                 <div class="kanban-task" data-task-id="${task._id}">
                     <div class="kanban-task-title">${task.title}</div>
                     <div class="kanban-task-description">${task.details || 'Sin descripción'}</div>
                     <div class="kanban-task-meta">
-                        <span class="kanban-task-date">${date}</span>
-                        <span class="kanban-task-status">${task.status}</span>
+                        <span class="kanban-task-date">Creado: ${createdDate}</span>
+                        ${dueDateHTML}
                     </div>
                     <div class="task-actions">
                         <button class="btn-icon edit-task" title="Editar tarea">✏️</button>
@@ -232,7 +260,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
 
         async toggleTaskStatus(e) {
-            const taskElement = e.target.closest('.task-item');
+            // Buscar el elemento contenedor de la tarea (funciona para lista y kanban)
+            const taskElement = e.target.closest('.task-item, .kanban-task');
+            
+            if (!taskElement) {
+                console.error('No se pudo encontrar el elemento de la tarea');
+                return;
+            }
+            
             const taskId = taskElement.dataset.taskId;
             const task = this.tasks.find(t => t._id === taskId);
             
@@ -242,16 +277,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await window.ApiService.updateTask(taskId, { status: newStatus });
                     task.status = newStatus;
                     this.renderTasks();
-                    Utils.showSuccess(`Tarea marcada como ${newStatus}`);
+                    
+                    if (window.Utils) {
+                        window.Utils.showSuccess(`Tarea marcada como ${newStatus}`);
+                    }
                 } catch (error) {
                     console.error('Error updating task:', error);
-                    Utils.showError('Error al actualizar la tarea');
+                    if (window.Utils) {
+                        window.Utils.showError('Error al actualizar la tarea');
+                    }
                 }
             }
         },
 
         async deleteTask(e) {
-            const taskElement = e.target.closest('.task-item');
+            // Buscar el elemento contenedor de la tarea (funciona para lista y kanban)
+            const taskElement = e.target.closest('.task-item, .kanban-task');
+            
+            if (!taskElement) {
+                console.error('No se pudo encontrar el elemento de la tarea');
+                return;
+            }
+            
             const taskId = taskElement.dataset.taskId;
             
             if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
@@ -259,10 +306,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await window.ApiService.deleteTask(taskId);
                     this.tasks = this.tasks.filter(t => t._id !== taskId);
                     this.renderTasks();
-                    Utils.showSuccess('Tarea eliminada exitosamente');
+                    
+                    if (window.Utils) {
+                        window.Utils.showSuccess('Tarea eliminada exitosamente');
+                    }
                 } catch (error) {
                     console.error('Error deleting task:', error);
-                    Utils.showError('Error al eliminar la tarea');
+                    if (window.Utils) {
+                        window.Utils.showError('Error al eliminar la tarea');
+                    }
                 }
             }
         },
@@ -279,11 +331,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const titleInput = document.getElementById('edit-title');
                 const detailsInput = document.getElementById('edit-details');
                 const statusInput = document.getElementById('edit-status');
+                const dateInput = document.getElementById('edit-date');
+                const timeInput = document.getElementById('edit-time');
 
                 // Establecer los valores actuales
                 titleInput.value = task.title;
                 detailsInput.value = task.details || '';
                 statusInput.value = task.status;
+
+                // Manejar fecha y hora si existen
+                if (task.date) {
+                    const dueDate = new Date(task.date);
+                    
+                    // Formato para input date (YYYY-MM-DD)
+                    const year = dueDate.getFullYear();
+                    const month = String(dueDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(dueDate.getDate()).padStart(2, '0');
+                    dateInput.value = `${year}-${month}-${day}`;
+                    
+                    // Formato para input time (HH:MM)
+                    const hours = String(dueDate.getHours()).padStart(2, '0');
+                    const minutes = String(dueDate.getMinutes()).padStart(2, '0');
+                    timeInput.value = `${hours}:${minutes}`;
+                } else {
+                    dateInput.value = '';
+                    timeInput.value = '';
+                }
 
                 // Guardar el ID de la tarea actual
                 this.currentTaskId = taskId;
@@ -295,20 +368,62 @@ document.addEventListener('DOMContentLoaded', async () => {
                 form.onsubmit = async (e) => {
                     e.preventDefault();
                     const formData = new FormData(form);
+                    
+                    // Procesar fecha y hora
+                    let dateValue = formData.get('date');
+                    const timeValue = formData.get('time') || '00:00';
+                    
+                    if (dateValue) {
+                        // Combinar fecha y hora
+                        const selectedDate = new Date(dateValue + 'T' + timeValue);
+                        
+                        // Verificar si la fecha es anterior a hoy
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        const selectedDateWithoutTime = new Date(selectedDate);
+                        selectedDateWithoutTime.setHours(0, 0, 0, 0);
+                        
+                        if (selectedDateWithoutTime < today) {
+                            alert('La fecha de vencimiento no puede ser anterior a hoy.');
+                            return;
+                        }
+                        
+                        // Convertir a formato ISO para el backend
+                        dateValue = selectedDate.toISOString();
+                    }
+                    
                     const updatedTask = {
                         title: formData.get('title'),
                         details: formData.get('details'),
-                        status: formData.get('status')
+                        status: formData.get('status'),
+                        date: dateValue || null
                     };
 
                     try {
+                        // Intentar actualizar la tarea
                         await window.ApiService.updateTask(taskId, updatedTask);
+                        
+                        // Cerrar el modal
                         modal.style.display = 'none';
-                        await this.loadTasks(); // Recargar las tareas
-                        Utils.showSuccess('Tarea actualizada exitosamente');
+                        
+                        // Recargar las tareas
+                        await this.loadTasks();
+                        
+                        // Mostrar mensaje de éxito
+                        if (window.Utils) {
+                            window.Utils.showSuccess('Tarea actualizada exitosamente');
+                        }
                     } catch (error) {
+                        // Manejar error
                         console.error('Error updating task:', error);
-                        Utils.showError('Error al actualizar la tarea');
+                        
+                        // Mostrar mensaje de error
+                        if (window.Utils) {
+                            window.Utils.showError('Error al actualizar la tarea');
+                        } else {
+                            alert('Error al actualizar la tarea');
+                        }
                     }
                 };
 

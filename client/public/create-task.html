@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="./css/variables.css">
     <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="./css/create-task.css">
+    <link rel="stylesheet" href="./css/date-time.css">
+    <link rel="stylesheet" href="./css/notifications.css">
 </head>
 <body>
     <div class="app-layout">
@@ -95,6 +97,15 @@
                             <option value="Haciendo">Haciendo</option>
                             <option value="Hecho">Hecho</option>
                         </select>
+                    </div>
+
+                        <div class="form-group">
+                        <label for="task-date">Fecha de vencimiento *</label>
+                        <div class="date-time-container">
+                            <input type="date" id="task-date" name="date" class="date-input" required>
+                            <input type="time" id="task-time" name="time" class="time-input" required>
+                        </div>
+                        <small>Fecha y hora son obligatorias</small>
                     </div>
 
                     <div class="form-actions">
