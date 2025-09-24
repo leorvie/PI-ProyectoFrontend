@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/date-time.css">
+    <link rel="stylesheet" href="./css/notifications.css">
 </head>
 <body>
     <div class="app-layout">
@@ -151,8 +153,9 @@
             <h2>Editar Tarea</h2>
             <form id="edit-task-form">
                 <div class="form-group">
-                    <label for="edit-title">Título</label>
-                    <input type="text" id="edit-title" name="title" required maxlength="50">
+                    <label for="edit-title">Título de la tarea *</label>
+                    <input type="text" id="edit-title" name="title" required maxlength="50" 
+                           placeholder="Escribe el título de tu tarea">
                     <div class="char-counter"></div>
                 </div>
                 <div class="form-group">
@@ -167,6 +170,15 @@
                         <option value="Haciendo">Haciendo</option>
                         <option value="Hecho">Hecho</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-date">Fecha de vencimiento *</label>
+                    <div class="date-time-container">
+                        <input type="date" id="edit-date" name="date" class="date-input" required>
+                        <input type="time" id="edit-time" name="time" class="time-input" required>
+                    </div>
+                    <small>Fecha y hora son obligatorias</small>
                 </div>
                 <div class="modal-actions">
                     <button type="submit" class="btn btn-primary">Guardar</button>

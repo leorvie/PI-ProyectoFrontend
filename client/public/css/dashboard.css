@@ -367,16 +367,8 @@
   transform: translateY(-2px);
 }
 
-.kanban-task.priority-high {
-  border-left-color: var(--danger-color);
-}
-
-.kanban-task.priority-medium {
-  border-left-color: var(--warning-color);
-}
-
-.kanban-task.priority-low {
-  border-left-color: var(--success-color);
+.kanban-task {
+  border-left-color: var(--primary-color);
 }
 
 .kanban-task-title {
@@ -395,8 +387,8 @@
 
 .kanban-task-meta {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
   font-size: 0.75rem;
   color: var(--text-light);
 }
@@ -405,14 +397,63 @@
   background: var(--secondary-color);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
+  display: inline-block;
 }
 
-.kanban-task-priority {
+.kanban-task-due-date {
+  background: var(--secondary-color);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  font-weight: 500;
-  text-transform: uppercase;
+  display: inline-block;
 }
+
+.kanban-task-due-date.overdue {
+  background-color: rgba(220, 38, 38, 0.2);
+  color: var(--danger-color);
+}
+
+/* Botones de acción en tarjetas Kanban */
+.task-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.btn-icon:hover {
+  background-color: var(--secondary-color);
+  transform: scale(1.1);
+}
+
+.btn-icon.edit-task:hover {
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+.btn-icon.delete-task:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+
+
+/* Prioridad específica */
+
 
 .priority-high {
   background: rgba(239, 68, 68, 0.1);

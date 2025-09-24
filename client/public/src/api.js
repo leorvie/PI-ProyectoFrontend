@@ -1,12 +1,7 @@
 // API Service para comunicación con el backend
 
-// Detectar si estamos en producción o desarrollo
-const isProduction = import.meta.env.MODE === "production";
-
-// Selección automática de la URL base según el entorno
-const API_BASE_URL = isProduction
-  ? import.meta.env.VITE_API_URL_PROD
-  : import.meta.env.VITE_API_URL_LOCAL;
+// URL base fija para desarrollo
+const API_BASE_URL = 'http://localhost:3000/api/v1';
 
 const ApiService = {
   async request(endpoint, options = {}) {
@@ -88,13 +83,7 @@ const ApiService = {
   });
 },
 
-async resetPassword(token, newPassword) {
-  return await this.request(`/reset-password/${token}`, {
-    method: 'POST',
-    body: JSON.stringify({ password: newPassword }),
-  });
-},
-
+  // Autenticación y perfil
   async verifyToken() {
     return await this.request('/verify');
   },
@@ -103,16 +92,23 @@ async resetPassword(token, newPassword) {
     return await this.request('/profile');
   },
 
+  async updateProfile(profileData) {
+    return await this.request('/profile/edit', {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+  },
+
   // Recuperación de contraseña
   async forgotPassword(email) {
-    return await this.request('/auth/forgot-password', {
+    return await this.request('/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
     });
   },
 
   async resetPassword(token, password) {
-    return await this.request('/auth/reset-password', {
+    return await this.request('/reset-password', {
       method: 'POST',
       body: JSON.stringify({ token, password }),
     });
@@ -132,7 +128,15 @@ async resetPassword(token, newPassword) {
 
   async getTask(id) {
     return await this.request(`/tasks/${id}`);
+  },
+
+  // Eliminar usuario
+  async deleteUser(userId) {
+    return await this.request(`/user/${userId}`, {
+      method: 'DELETE'
+    });
   }
 };
 
-export default ApiService;
+// Hacer ApiService disponible globalmente
+window.ApiService = ApiService;
