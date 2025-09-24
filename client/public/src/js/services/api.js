@@ -1,5 +1,5 @@
 // API Service para comunicación con el backend
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+const API_BASE_URL = 'https://pi-proyectobackend.onrender.com/api/v1';
 
 const ApiService = {
   async request(endpoint, options = {}) {
@@ -123,8 +123,15 @@ const ApiService = {
       method: 'PUT',
       body: JSON.stringify(taskData)
     });
-  }
-};
+  },
 
+async forgotPassword(email) {
+    return await this.request('/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    });
+
+}
+}
 // Hacer ApiService disponible globalmente
 window.ApiService = ApiService;
