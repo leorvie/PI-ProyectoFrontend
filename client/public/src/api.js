@@ -88,7 +88,7 @@ const ApiService = {
   });
 },
 
-  async resetPassword(token, newPassword) {
+async resetPassword(token, newPassword) {
   return await this.request(`/reset-password?token=${token}`, {
     method: 'POST',
     body: JSON.stringify({ password: newPassword }),
