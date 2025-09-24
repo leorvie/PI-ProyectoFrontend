@@ -1,7 +1,12 @@
 // API Service para comunicación con el backend
 
-// URL base fija para desarrollo
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+// Detectar si estamos en producción o desarrollo
+const isProduction = import.meta.env.MODE === "production";
+
+// Selección automática de la URL base según el entorno
+const API_BASE_URL = isProduction
+  ? import.meta.env.VITE_API_URL_PROD
+  : import.meta.env.VITE_API_URL_LOCAL;
 
 const ApiService = {
   async request(endpoint, options = {}) {
@@ -83,6 +88,12 @@ const ApiService = {
   });
 },
 
+  async resetPassword(token, newPassword) {
+  return await this.request(`/reset-password?token=${token}`, {
+    method: 'POST',
+    body: JSON.stringify({ password: newPassword }),
+  });
+},
   // Autenticación y perfil
   async verifyToken() {
     return await this.request('/verify');
@@ -99,20 +110,6 @@ const ApiService = {
     });
   },
 
-  // Recuperación de contraseña
-  async forgotPassword(email) {
-    return await this.request('/forgot-password', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    });
-  },
-
-  async resetPassword(token, password) {
-    return await this.request('/reset-password', {
-      method: 'POST',
-      body: JSON.stringify({ token, password }),
-    });
-  },
 
   // Métodos de tareas
   async getTasks() {
