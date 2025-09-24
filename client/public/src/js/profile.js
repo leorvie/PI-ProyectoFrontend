@@ -1,11 +1,13 @@
 class ProfileManager {
     constructor() {
-        this.apiService = window.ApiService;
+        this.apiService = ApiService;
+        
         this.profileForm = document.getElementById('profile-form');
         this.profileInfo = document.querySelector('.profile-info');
         this.editButton = document.getElementById('edit-profile');
         this.saveButton = document.getElementById('save-profile');
         this.cancelButton = document.getElementById('cancel-edit');
+        this.deleteButton = document.getElementById('delete-account');
         this.editMode = false;
 
         this.initializeEventListeners();
@@ -16,21 +18,20 @@ class ProfileManager {
         this.editButton?.addEventListener('click', () => this.enableEditMode());
         this.saveButton?.addEventListener('click', () => this.saveProfile());
         this.cancelButton?.addEventListener('click', () => this.cancelEdit());
+        this.deleteButton?.addEventListener('click', () => this.confirmDeleteAccount());
         this.profileForm?.addEventListener('submit', (e) => this.handleSubmit(e));
     }
 
     async loadUserProfile() {
         try {
-            window.Utils.showLoading();
+            this.showLoading();
             const profile = await this.apiService.getProfile();
-            console.log('Perfil cargado:', profile);  // Debug
             this.updateProfileDisplay(profile);
-            this.disableEditMode(); // Asegurar que estamos en modo visualización
-            window.Utils.hideLoading();
+            this.disableEditMode();
+            this.hideLoading();
         } catch (error) {
-            window.Utils.hideLoading();
-            window.Utils.showErrorMessage('Error al cargar el perfil');
-            console.error('Error loading profile:', error);
+            this.hideLoading();
+            this.showError('Error al cargar el perfil: ' + error.message);
         }
     }
 
@@ -86,15 +87,15 @@ class ProfileManager {
                 age: parseInt(formData.get('age'))
             };
 
-            window.Utils.showLoading();
+            this.showLoading();
             const updatedProfile = await this.apiService.updateProfile(profileData);
             this.updateProfileDisplay(updatedProfile);
             this.disableEditMode();
-            window.Utils.hideLoading();
-            window.Utils.showSuccessMessage('Perfil actualizado con éxito');
+            this.hideLoading();
+            this.showSuccess('Perfil actualizado con éxito');
         } catch (error) {
-            window.Utils.hideLoading();
-            window.Utils.showErrorMessage('Error al actualizar el perfil');
+            this.hideLoading();
+            this.showError('Error al actualizar el perfil');
             console.error('Error updating profile:', error);
         }
     }
@@ -107,30 +108,150 @@ class ProfileManager {
         const age = document.getElementById('age').value;
 
         if (!emailRegex.test(email)) {
-            showErrorMessage('Por favor ingrese un email válido');
+            this.showError('Por favor ingrese un email válido');
             return false;
         }
 
         if (name.trim().length < 2) {
-            showErrorMessage('El nombre debe tener al menos 2 caracteres');
+            this.showError('El nombre debe tener al menos 2 caracteres');
             return false;
         }
 
         if (lastname.trim().length < 2) {
-            showErrorMessage('El apellido debe tener al menos 2 caracteres');
+            this.showError('El apellido debe tener al menos 2 caracteres');
             return false;
         }
 
         if (age < 13) {
-            showErrorMessage('La edad debe ser mayor a 13 años');
+            this.showError('La edad debe ser mayor a 13 años');
             return false;
         }
 
         return true;
     }
+
+    showLoading() {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) loadingScreen.style.display = 'flex';
+    }
+
+    hideLoading() {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) loadingScreen.style.display = 'none';
+    }
+
+    showError(message) {
+        alert(message);
+    }
+
+    showSuccess(message) {
+        alert(message);
+    }
+
+    confirmDeleteAccount() {
+        // Crear un modal de confirmación personalizado
+        const modal = this.createDeleteConfirmationModal();
+        document.body.appendChild(modal);
+        modal.style.display = 'flex';
+    }
+
+    createDeleteConfirmationModal() {
+        const modal = document.createElement('div');
+        modal.className = 'delete-confirmation-modal';
+        modal.innerHTML = `
+            <div class="delete-modal-content">
+                <div class="delete-modal-header">
+                    <h3>⚠️ Confirmar Eliminación de Cuenta</h3>
+                </div>
+                <div class="delete-modal-body">
+                    <p><strong>¿Estás seguro de que deseas eliminar tu cuenta?</strong></p>
+                    <p>Esta acción es <strong>irreversible</strong> y eliminará:</p>
+                    <ul>
+                        <li>Tu perfil personal</li>
+                        <li>Todas tus tareas guardadas</li>
+                        <li>Todo tu historial en la aplicación</li>
+                    </ul>
+                    <p>No podrás recuperar esta información una vez eliminada.</p>
+                </div>
+                <div class="delete-modal-actions">
+                    <button class="btn btn-secondary" id="cancel-delete">Cancelar</button>
+                    <button class="btn btn-danger" id="confirm-delete">Sí, Eliminar Cuenta</button>
+                </div>
+            </div>
+        `;
+
+        // Agregar event listeners
+        modal.querySelector('#cancel-delete').addEventListener('click', () => {
+            modal.remove();
+        });
+
+        modal.querySelector('#confirm-delete').addEventListener('click', async () => {
+            modal.remove();
+            await this.deleteAccount();
+        });
+
+        // Cerrar modal al hacer click fuera de él
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+
+        return modal;
+    }
+
+    async deleteAccount() {
+        try {
+            this.showLoading();
+            
+            // Obtener el ID del usuario actual desde el perfil
+            const profile = await this.apiService.getProfile();
+            console.log('Usuario a eliminar:', profile);
+            
+            // Llamar al endpoint de eliminación real
+            const result = await this.apiService.deleteUser(profile.id);
+            console.log('Resultado eliminación:', result);
+            
+            this.hideLoading();
+            
+            // Mostrar mensaje de confirmación
+            alert('✅ Cuenta eliminada permanentemente.\n\n' + 
+                  '• Tu perfil ha sido eliminado\n' + 
+                  '• Todas tus tareas han sido eliminadas\n' +
+                  '• No podrás volver a acceder con estas credenciales\n\n' +
+                  'Serás redirigido al inicio.');
+            
+            // Limpiar cualquier dato local y redirigir
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Redirigir al login
+            window.location.href = 'auth.html';
+            
+        } catch (error) {
+            this.hideLoading();
+            console.error('Error deleting account:', error);
+            
+            if (error.message.includes('Failed to fetch')) {
+                this.showError('No se puede conectar con el servidor para eliminar la cuenta.');
+            } else {
+                this.showError('Error al eliminar la cuenta: ' + error.message);
+            }
+        }
+    }
 }
 
 // Inicializar el gestor de perfil cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', () => {
-    new ProfileManager();
+    console.log('Inicializando ProfileManager...');
+    try {
+        // Dar tiempo para que se carguen todos los scripts
+        setTimeout(() => {
+            new ProfileManager();
+            new Sidebar();
+        }, 100);
+    } catch (error) {
+        console.error('Error inicializando ProfileManager:', error);
+        alert('Error al inicializar el perfil. Por favor, recarga la página.');
+    }
 });
