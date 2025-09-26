@@ -1,6 +1,21 @@
-// Manejo de creación de tareas
+/**
+ * @fileoverview Manejo de creación de tareas - Formulario y validaciones
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
 document.addEventListener('DOMContentLoaded', async () => {
+    /**
+     * Gestor para la creación de nuevas tareas
+     * Maneja formulario, validaciones y contadores de caracteres
+     * @namespace CreateTaskManager
+     */
     const CreateTaskManager = {
+        /**
+         * Inicializar el gestor de creación de tareas
+         * Verifica autenticación y configura eventos
+         * @async
+         */
         async init() {
             // Verificar autenticación
             const isAuthenticated = await Utils.checkAuth();
@@ -10,6 +25,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.setupCharCounters();
         },
 
+        /**
+         * Configurar todos los event listeners del formulario de creación de tareas
+         * Incluye validación en tiempo real y botones de navegación
+         */
         bindEvents() {
             const taskForm = document.getElementById('task-form');
             const cancelBtn = document.getElementById('cancel-btn');
@@ -40,7 +59,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.validateForm();
         },
 
-        // Validar formulario y habilitar/deshabilitar botón
+        /**
+         * Validar formulario y habilitar/deshabilitar botón de envío
+         * Verifica que todos los campos obligatorios estén completos y válidos
+         */
         validateForm() {
             const titleInput = document.getElementById('task-title');
             const dateInput = document.getElementById('task-date');
@@ -77,6 +99,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Configurar contadores de caracteres para los campos de texto
+         * Muestra el límite de caracteres en tiempo real para título y descripción
+         */
         setupCharCounters() {
             const titleInput = document.getElementById('task-title');
             const detailsInput = document.getElementById('task-details');
@@ -95,6 +121,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Actualizar contador de caracteres de un campo de texto
+         * Cambia el color cuando se acerca al límite
+         * @param {HTMLInputElement|HTMLTextAreaElement} input - Campo de texto a monitorear
+         * @param {number} maxLength - Límite máximo de caracteres
+         */
         updateCharCounter(input, maxLength) {
             const counter = input.parentElement.querySelector('.char-counter');
             const currentLength = input.value.length;
@@ -107,6 +139,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Manejar envío del formulario de creación de tarea
+         * Valida datos, procesa fecha/hora y envía la tarea a la API
+         * @async
+         * @param {Event} e - Evento de submit del formulario
+         */
         async handleSubmit(e) {
             e.preventDefault();
             Utils.clearError('task-error');
@@ -127,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 selectedDateWithoutTime.setHours(0, 0, 0, 0);
                 
                 if (selectedDateWithoutTime < today) {
-                    Utils.showError('task-error', 'La fecha de vencimiento no puede ser anterior a hoy');
+                    Utils.showError('La fecha de vencimiento no puede ser anterior a hoy');
                     return;
                 }
                 
@@ -172,6 +210,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Manejar cancelación del formulario
+         * Verifica cambios no guardados antes de salir
+         */
         handleCancel() {
             if (this.hasUnsavedChanges()) {
                 if (confirm('¿Estás seguro? Se perderán los cambios no guardados.')) {
@@ -182,26 +224,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Verificar si hay cambios no guardados en el formulario
+         * @returns {boolean} True si hay cambios, false en caso contrario
+         */
         hasUnsavedChanges() {
             const title = document.getElementById('task-title').value.trim();
             const details = document.getElementById('task-details').value.trim();
             return title || details;
         },
 
+        /**
+         * Mostrar modal de éxito después de crear la tarea
+         */
         showSuccessModal() {
             const modal = document.getElementById('success-modal');
             modal.style.display = 'flex';
         },
 
+        /**
+         * Ocultar modal de éxito
+         */
         hideSuccessModal() {
             const modal = document.getElementById('success-modal');
             modal.style.display = 'none';
         },
 
+        /**
+         * Navegar al dashboard principal
+         */
         goToDashboard() {
             Utils.navigateTo('/dashboard.html');
         },
 
+        /**
+         * Crear otra tarea - oculta modal y enfoca el primer campo
+         */
         createAnother() {
             this.hideSuccessModal();
             // El formulario ya fue limpiado, solo enfocar el primer campo
