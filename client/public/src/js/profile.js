@@ -1,6 +1,6 @@
 class ProfileManager {
     constructor() {
-        this.apiService = ApiService;
+        this.apiService = window.ApiService;
         
         this.profileForm = document.getElementById('profile-form');
         this.profileInfo = document.querySelector('.profile-info');
