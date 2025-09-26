@@ -237,6 +237,21 @@ const ApiService = {
     });
   },
 
+/**
+ * Restablecer contraseña usando token de recuperación
+ * @async
+ * @param {string} token - Token de recuperación enviado por email
+ * @param {string} newPassword - Nueva contraseña a establecer
+ * @returns {Promise<Object>} Confirmación de restablecimiento
+ * @throws {Error} Error si el token es inválido o la actualización falla
+ */
+async resetPassword(token, newPassword) {
+  return await this.request(`/reset-password?token=${token}`, {
+    method: 'POST',
+    body: JSON.stringify({ password: newPassword }),
+  });
+},
+
   /**
    * Solicitar restablecimiento de contraseña
    * @async

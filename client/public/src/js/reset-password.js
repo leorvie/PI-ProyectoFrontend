@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import ApiService from "./services/api.js";
+
 
 /**
  * Inicialización del módulo de restablecimiento de contraseña
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await ApiService.resetPassword(token, password);
+      const res = await window.ApiService.resetPassword(token, password);
       successMsg.textContent = res.message || "Contraseña restablecida correctamente.";
     } catch (err) {
       errorMsg.textContent = err.message || "Error al restablecer la contraseña.";
