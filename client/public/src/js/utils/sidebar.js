@@ -1,15 +1,36 @@
-// Sidebar functionality
+/**
+ * @fileoverview Funcionalidad del sidebar de navegación
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
+/**
+ * Clase que maneja la funcionalidad del sidebar de navegación,
+ * incluyendo navegación móvil, logout y carga de información del usuario
+ * @class Sidebar
+ */
 class Sidebar {
+    /**
+     * Constructor de la clase Sidebar
+     * Inicializa automáticamente todos los event listeners y funcionalidades
+     */
     constructor() {
         this.init();
     }
 
+    /**
+     * Inicializar todas las funcionalidades del sidebar
+     */
     init() {
         this.setupEventListeners();
         this.loadUserInfo();
         this.handleMobileMenu();
     }
 
+    /**
+     * Configurar todos los event listeners del sidebar
+     * Incluye botones de logout, menú móvil, overlay y elementos de navegación
+     */
     setupEventListeners() {
         // Logout button
         const logoutBtn = document.getElementById('logout-btn');
@@ -40,6 +61,10 @@ class Sidebar {
         });
     }
 
+    /**
+     * Cargar información del usuario desde la API y actualizar el sidebar
+     * @async
+     */
     async loadUserInfo() {
         try {
             const userData = await window.ApiService.getProfile();
@@ -55,6 +80,10 @@ class Sidebar {
         }
     }
 
+    /**
+     * Actualizar la información del usuario mostrada en el sidebar
+     * @param {string} username - Nombre de usuario a mostrar
+     */
     updateUserInfo(username) {
         const userInfoElement = document.getElementById('userInfo');
         if (userInfoElement) {
@@ -62,6 +91,11 @@ class Sidebar {
         }
     }
 
+    /**
+     * Manejar el proceso de cierre de sesión del usuario
+     * Limpia datos locales y redirige a la página de autenticación
+     * @async
+     */
     async handleLogout() {
         try {
             // Usar el ApiService en lugar de fetch directo
@@ -80,6 +114,10 @@ class Sidebar {
         }
     }
 
+    /**
+     * Alternar la visibilidad del menú móvil
+     * Añade/remueve las clases CSS necesarias para mostrar u ocultar el menú
+     */
     toggleMobileMenu() {
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -90,6 +128,10 @@ class Sidebar {
         }
     }
 
+    /**
+     * Cerrar el menú móvil
+     * Remueve las clases CSS que mantienen el menú visible
+     */
     closeMobileMenu() {
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -100,6 +142,10 @@ class Sidebar {
         }
     }
 
+    /**
+     * Configurar event listeners adicionales para el manejo del menú móvil
+     * Incluye cierre automático en redimensionamiento y tecla Escape
+     */
     handleMobileMenu() {
         // Close mobile menu on window resize
         window.addEventListener('resize', () => {
@@ -116,7 +162,10 @@ class Sidebar {
         });
     }
 
-    // Método para marcar el elemento activo del menú
+    /**
+     * Marcar el elemento activo del menú de navegación
+     * @param {string} currentPage - Nombre de la página actual para marcar como activa
+     */
     setActiveNavItem(currentPage) {
         const navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(item => {

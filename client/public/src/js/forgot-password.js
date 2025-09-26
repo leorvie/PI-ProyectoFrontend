@@ -1,10 +1,25 @@
 
 
+/**
+ * @fileoverview Funcionalidad para recuperación de contraseña
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
+  /** @type {HTMLFormElement} Formulario de recuperación de contraseña */
   const form = document.getElementById("forgot-form");
+  
+  /** @type {HTMLElement} Elemento para mostrar mensajes de éxito */
   const successMsg = document.getElementById("forgot-success");
+  
+  /** @type {HTMLElement} Elemento para mostrar mensajes de error */
   const errorMsg = document.getElementById("forgot-error");
 
+  /**
+   * Manejar envío del formulario de recuperación de contraseña
+   * @param {Event} e - Evento de submit del formulario
+   */
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     successMsg.textContent = "";
