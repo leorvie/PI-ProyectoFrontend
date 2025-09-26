@@ -1,30 +1,13 @@
-/**
- * @fileoverview Manejo de autenticación - Versión simplificada
- * @author Equipo de Desarrollo
- * @version 1.0.0
- */
-
+// Manejo de autenticación
 import ApiService from './api.js';
 
-/**
- * Gestor de autenticación simplificado
- * Versión básica para manejo de login y registro
- * @namespace AuthManager
- */
 const AuthManager = {
-  /** @type {boolean} Indica si está en modo login (true) o registro (false) */
   isLoginMode: true,
 
-  /**
-   * Inicializar el gestor de autenticación
-   */
   init() {
     this.bindEvents();
   },
 
-  /**
-   * Vincular eventos del DOM con los métodos del gestor
-   */
   bindEvents() {
     const authForm = document.getElementById('auth-form');
     const switchBtn = document.getElementById('switch-mode');
@@ -33,11 +16,6 @@ const AuthManager = {
     switchBtn.addEventListener('click', () => this.toggleMode());
   },
 
-  /**
-   * Manejar envío del formulario de autenticación
-   * @param {Event} e - Evento de envío del formulario
-   * @async
-   */
   async handleSubmit(e) {
     e.preventDefault();
     console.log('Form submitted, mode:', this.isLoginMode); // Debug log
@@ -78,17 +56,11 @@ const AuthManager = {
     }
   },
 
-  /**
-   * Alternar entre modo login y registro
-   */
   toggleMode() {
     this.isLoginMode = !this.isLoginMode;
     this.updateUI();
   },
 
-  /**
-   * Actualizar interfaz según el modo actual (login/registro)
-   */
   updateUI() {
     const title = document.getElementById('auth-title');
     const submitBtn = document.getElementById('auth-submit');

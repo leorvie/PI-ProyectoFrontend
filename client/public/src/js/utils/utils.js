@@ -9,27 +9,38 @@
  * Proporciona funciones helper para formateo, navegación, validación y notificaciones
  * @namespace Utils
  */
+
 const Utils = {
-  /**
+  // Variables para control de notificaciones
+  _lastErrorMessage: null,
+  _lastErrorTime: 0,
+  _lastSuccessMessage: null,
+  _lastSuccessTime: 0,
+
+   /**
    * Formatear fecha con hora en formato local español
    * @param {string|Date} date - Fecha a formatear
    * @returns {string} Fecha formateada o mensaje de error
    */
-  formatDate: function(date) {
+  _formatDate: function(date, options) {
     if (!date) return 'N/A';
-    
     try {
-      return new Date(date).toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      return new Date(date).toLocaleDateString('es-ES', options);
     } catch (error) {
       console.error('Error al formatear fecha:', error);
       return 'Fecha inválida';
     }
+  },
+
+  // Formatear fecha completa con hora
+  formatDate: function(date) {
+    return this._formatDate(date, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   },
 
   /**
@@ -38,18 +49,11 @@ const Utils = {
    * @returns {string} Fecha formateada o mensaje de error
    */
   formatDateOnly: function(date) {
-    if (!date) return 'N/A';
-    
-    try {
-      return new Date(date).toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch (error) {
-      console.error('Error al formatear fecha:', error);
-      return 'Fecha inválida';
-    }
+    return this._formatDate(date, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   },
   
   /**
@@ -59,7 +63,6 @@ const Utils = {
    */
   formatTimeOnly: function(date) {
     if (!date) return 'N/A';
-    
     try {
       return new Date(date).toLocaleTimeString('es-ES', {
         hour: '2-digit',
@@ -71,15 +74,31 @@ const Utils = {
     }
   },
 
+  // Gestionar mensajes en elementos DOM
+  _updateDOMElement: function(elementId, message, action = 'set') {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.textContent = action === 'clear' ? '' : message;
+      return true;
+    }
+    return false;
+  },
+
   /**
    * Mostrar mensaje de error en un elemento específico
    * @param {string} elementId - ID del elemento donde mostrar el error
    * @param {string} message - Mensaje de error a mostrar
    */
-  showError: function(elementId, message) {
-    const errorElement = document.getElementById(elementId);
-    if (errorElement) {
-      errorElement.textContent = message;
+  showError: function(messageOrElementId, elementIdOrMessage) {
+    // Detectar si el primer parámetro es un ID de elemento
+    if (typeof messageOrElementId === 'string' && arguments.length === 2) {
+      // Formato: showError(elementId, message)
+      if (!this._updateDOMElement(messageOrElementId, elementIdOrMessage)) {
+        this.showNotification(elementIdOrMessage, 'error');
+      }
+    } else {
+      // Formato: showError(message)
+      this.showNotification(messageOrElementId, 'error');
     }
   },
 
@@ -88,10 +107,7 @@ const Utils = {
    * @param {string} elementId - ID del elemento donde limpiar el error
    */
   clearError: function(elementId) {
-    const errorElement = document.getElementById(elementId);
-    if (errorElement) {
-      errorElement.textContent = '';
-    }
+    this._updateDOMElement(elementId, '', 'clear');
   },
 
   /**
@@ -133,90 +149,60 @@ const Utils = {
     return tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   },
 
+  // Gestionar pantalla de carga
+  _toggleLoading: function(show) {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.display = show ? 'flex' : 'none';
+    }
+  },
+
   /**
    * Mostrar pantalla de carga
    */
   showLoading: function() {
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen) {
-      loadingScreen.style.display = 'flex';
-    }
+    this._toggleLoading(true);
   },
 
   /**
    * Ocultar pantalla de carga
    */
   hideLoading: function() {
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen) {
-      loadingScreen.style.display = 'none';
-    }
+    this._toggleLoading(false);
   },
 
-  /**
-   * Mostrar mensaje de error usando el sistema de notificaciones
-   * @param {string} message - Mensaje de error a mostrar
-   */
-  showErrorMessage: function(message) {
-    // Crear notificación de error
-    this.showNotification(message, 'error');
-  },
 
-  /**
-   * Mostrar mensaje de éxito usando el sistema de notificaciones
-   * @param {string} message - Mensaje de éxito a mostrar
-   */
-  showSuccessMessage: function(message) {
-    // Crear notificación de éxito
-    this.showNotification(message, 'success');
-  },
-
-  /** @type {Array} Cola de notificaciones pendientes */
-  notificationsQueue: [],
   
-  /** @type {boolean} Indica si se está mostrando una notificación */
-  isShowingNotification: false,
-  
-  /** @type {string|null} Último mensaje de error mostrado */
-  lastErrorMessage: null,
-  
-  /** @type {number} Timestamp del último error */
-  lastErrorTime: 0,
-  
-  /** @type {string|null} Último mensaje de éxito mostrado */
-  lastSuccessMessage: null,
-  
-  /** @type {number} Timestamp del último éxito */
-  lastSuccessTime: 0,
-  
-  /**
-   * Mostrar notificación toast con prevención de duplicados
-   * @param {string} message - Mensaje a mostrar
-   * @param {string} [type='info'] - Tipo de notificación (info, success, error, warning)
-   */
-  showNotification: function(message, type) {
-    // Usar un tipo por defecto si no se especifica
-    if (!type) type = 'info';
-    
-    // Prevenir duplicados en corto tiempo
+  // Prevenir notificaciones duplicadas
+  _isDuplicateNotification: function(message, type) {
     const now = Date.now();
-    
+    const timeThreshold = 3000; // 3 segundos
+
     if (type === 'error') {
-      // Evitar mostrar el mismo error en menos de 3 segundos
-      if (this.lastErrorMessage === message && now - this.lastErrorTime < 3000) {
+      if (this._lastErrorMessage === message && now - this._lastErrorTime < timeThreshold) {
         console.log('Evitando notificación de error duplicada:', message);
-        return;
+        return true;
       }
-      this.lastErrorMessage = message;
-      this.lastErrorTime = now;
+      this._lastErrorMessage = message;
+      this._lastErrorTime = now;
     } else if (type === 'success') {
-      // Evitar mostrar el mismo éxito en menos de 3 segundos
-      if (this.lastSuccessMessage === message && now - this.lastSuccessTime < 3000) {
+      if (this._lastSuccessMessage === message && now - this._lastSuccessTime < timeThreshold) {
         console.log('Evitando notificación de éxito duplicada:', message);
-        return;
+        return true;
       }
-      this.lastSuccessMessage = message;
-      this.lastSuccessTime = now;
+      this._lastSuccessMessage = message;
+      this._lastSuccessTime = now;
+    }
+    return false;
+  },
+
+  // Método para mostrar notificaciones
+  showNotification: function(message, type) {
+    type = type || 'info';
+    
+    // Prevenir duplicados
+    if (this._isDuplicateNotification(message, type)) {
+      return;
     }
     
     // Crear elemento de notificación
@@ -261,26 +247,15 @@ const Utils = {
     }
   },
 
-  /**
-   * Mostrar mensaje de error con soporte para elementos DOM o notificaciones
-   * @param {string} message - Mensaje de error
-   * @param {string} [elementId] - ID del elemento DOM donde mostrar el error
-   */
-  showError: function(message, elementId) {
-    // Si es un elemento DOM, actualizar el contenido
-    if (elementId && document.getElementById(elementId)) {
-      const errorElement = document.getElementById(elementId);
-      errorElement.textContent = message;
-    } else {
-      // Si no hay elemento, usar sistema de notificaciones
-      this.showNotification(message, 'error');
-    }
+  // Aliases para mantener compatibilidad
+  showErrorMessage: function(message) {
+    this.showNotification(message, 'error');
   },
 
-  /**
-   * Mostrar mensaje de éxito usando notificaciones toast
-   * @param {string} message - Mensaje de éxito a mostrar
-   */
+  showSuccessMessage: function(message) {
+    this.showNotification(message, 'success');
+  },
+
   showSuccess: function(message) {
     this.showNotification(message, 'success');
   }
