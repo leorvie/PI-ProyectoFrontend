@@ -249,8 +249,14 @@ const ApiService = {
       method: 'POST',
       body: JSON.stringify({ email })
     });
+  },
+  async deleteUser(userId) {
+    return await this.request(`/user/${userId}`, {
+      method: 'DELETE'
+    });
   }
 };
+
 
 // Hacer ApiService disponible globalmente
 window.ApiService = ApiService;

@@ -1,42 +1,32 @@
 /**
- * @fileoverview Gestor del perfil de usuario - Edición y eliminación de cuenta
- * @author Equipo de Desarrollo
+ * @fileoverview Módulo de gestión de perfiles de usuario
+ * @description Maneja la funcionalidad completa del perfil de usuario incluyendo
+ * visualización, edición, actualización y eliminación de cuentas
+ * @author Proyecto Frontend
  * @version 1.0.0
+ * @namespace ProfileManager
  */
 
 /**
- * Clase que maneja la funcionalidad del perfil de usuario
- * Permite ver, editar y eliminar la cuenta del usuario
+ * Clase para manejar todas las operaciones relacionadas con el perfil del usuario
  * @class ProfileManager
+ * @description Gestiona la visualización, edición y eliminación del perfil de usuario
  */
 class ProfileManager {
     /**
-     * Constructor del gestor de perfil
-     * Inicializa referencias DOM y configura eventos
+     * Constructor de la clase ProfileManager
+     * @constructor
+     * @description Inicializa el gestor de perfiles y configura los elementos del DOM
      */
     constructor() {
-        /** @type {Object} Referencia al servicio de API */
-        this.apiService = window.ApiService;
+        this.apiService = ApiService;
         
-        /** @type {HTMLFormElement} Formulario de perfil */
         this.profileForm = document.getElementById('profile-form');
-        
-        /** @type {HTMLElement} Contenedor de información del perfil */
         this.profileInfo = document.querySelector('.profile-info');
-        
-        /** @type {HTMLButtonElement} Botón para editar perfil */
         this.editButton = document.getElementById('edit-profile');
-        
-        /** @type {HTMLButtonElement} Botón para guardar cambios */
         this.saveButton = document.getElementById('save-profile');
-        
-        /** @type {HTMLButtonElement} Botón para cancelar edición */
         this.cancelButton = document.getElementById('cancel-edit');
-        
-        /** @type {HTMLButtonElement} Botón para eliminar cuenta */
         this.deleteButton = document.getElementById('delete-account');
-        
-        /** @type {boolean} Indica si está en modo edición */
         this.editMode = false;
 
         this.initializeEventListeners();
@@ -44,7 +34,9 @@ class ProfileManager {
     }
 
     /**
-     * Configurar todos los event listeners del perfil
+     * Inicializa todos los event listeners del perfil
+     * @method initializeEventListeners
+     * @description Configura los manejadores de eventos para botones y formularios
      */
     initializeEventListeners() {
         this.editButton?.addEventListener('click', () => this.enableEditMode());
@@ -55,8 +47,11 @@ class ProfileManager {
     }
 
     /**
-     * Cargar perfil del usuario desde la API
+     * Carga el perfil del usuario desde la API
      * @async
+     * @method loadUserProfile
+     * @description Obtiene los datos del perfil del usuario y actualiza la interfaz
+     * @returns {Promise<void>} Promesa que se resuelve cuando el perfil se ha cargado
      */
     async loadUserProfile() {
         try {
@@ -72,7 +67,9 @@ class ProfileManager {
     }
 
     /**
-     * Actualizar la visualización del perfil en la interfaz
+     * Actualiza la visualización del perfil en el DOM
+     * @method updateProfileDisplay
+     * @description Actualiza tanto los campos del formulario como la vista de información
      * @param {Object} profile - Datos del perfil del usuario
      * @param {string} profile.name - Nombre del usuario
      * @param {string} profile.lastname - Apellido del usuario
@@ -96,7 +93,9 @@ class ProfileManager {
     }
 
     /**
-     * Activar modo de edición del perfil
+     * Habilita el modo de edición del perfil
+     * @method enableEditMode
+     * @description Muestra el formulario de edición y oculta la vista de información
      */
     enableEditMode() {
         this.editMode = true;
@@ -106,7 +105,9 @@ class ProfileManager {
     }
 
     /**
-     * Desactivar modo de edición del perfil
+     * Deshabilita el modo de edición del perfil
+     * @method disableEditMode
+     * @description Oculta el formulario de edición y muestra la vista de información
      */
     disableEditMode() {
         this.editMode = false;
@@ -116,7 +117,9 @@ class ProfileManager {
     }
 
     /**
-     * Cancelar edición y restaurar datos originales
+     * Cancela la edición del perfil
+     * @method cancelEdit
+     * @description Resetea el formulario, sale del modo edición y recarga los datos originales
      */
     cancelEdit() {
         this.profileForm.reset();
@@ -125,9 +128,12 @@ class ProfileManager {
     }
 
     /**
-     * Manejar envío del formulario de perfil
-     * @param {Event} event - Evento de envío del formulario
+     * Maneja el evento de envío del formulario
      * @async
+     * @method handleSubmit
+     * @description Previene el comportamiento por defecto del formulario y guarda el perfil
+     * @param {Event} event - Evento de envío del formulario
+     * @returns {Promise<void>} Promesa que se resuelve cuando se ha manejado el envío
      */
     async handleSubmit(event) {
         event.preventDefault();
@@ -135,8 +141,11 @@ class ProfileManager {
     }
 
     /**
-     * Guardar cambios del perfil en el servidor
+     * Guarda los cambios del perfil del usuario
      * @async
+     * @method saveProfile
+     * @description Valida el formulario, envía los datos a la API y actualiza la interfaz
+     * @returns {Promise<void>} Promesa que se resuelve cuando el perfil se ha guardado
      */
     async saveProfile() {
         try {
@@ -164,8 +173,10 @@ class ProfileManager {
     }
 
     /**
-     * Validar formulario de perfil
-     * @returns {boolean} True si es válido, false en caso contrario
+     * Valida los datos del formulario de perfil
+     * @method validateForm
+     * @description Verifica que todos los campos cumplan con los requisitos mínimos
+     * @returns {boolean} True si el formulario es válido, false en caso contrario
      */
     validateForm() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -198,7 +209,9 @@ class ProfileManager {
     }
 
     /**
-     * Mostrar pantalla de carga
+     * Muestra la pantalla de carga
+     * @method showLoading
+     * @description Hace visible el elemento de pantalla de carga
      */
     showLoading() {
         const loadingScreen = document.getElementById('loading-screen');
@@ -206,7 +219,9 @@ class ProfileManager {
     }
 
     /**
-     * Ocultar pantalla de carga
+     * Oculta la pantalla de carga
+     * @method hideLoading
+     * @description Oculta el elemento de pantalla de carga
      */
     hideLoading() {
         const loadingScreen = document.getElementById('loading-screen');
@@ -214,7 +229,9 @@ class ProfileManager {
     }
 
     /**
-     * Mostrar mensaje de error
+     * Muestra un mensaje de error al usuario
+     * @method showError
+     * @description Presenta un mensaje de error usando alert
      * @param {string} message - Mensaje de error a mostrar
      */
     showError(message) {
@@ -222,7 +239,9 @@ class ProfileManager {
     }
 
     /**
-     * Mostrar mensaje de éxito
+     * Muestra un mensaje de éxito al usuario
+     * @method showSuccess
+     * @description Presenta un mensaje de éxito usando alert
      * @param {string} message - Mensaje de éxito a mostrar
      */
     showSuccess(message) {
@@ -230,7 +249,9 @@ class ProfileManager {
     }
 
     /**
-     * Mostrar confirmación antes de eliminar cuenta
+     * Confirma la eliminación de la cuenta del usuario
+     * @method confirmDeleteAccount
+     * @description Muestra un modal de confirmación para eliminar la cuenta
      */
     confirmDeleteAccount() {
         // Crear un modal de confirmación personalizado
@@ -240,8 +261,10 @@ class ProfileManager {
     }
 
     /**
-     * Crear modal de confirmación para eliminación de cuenta
-     * @returns {HTMLElement} Elemento modal de confirmación
+     * Crea el modal de confirmación para eliminar cuenta
+     * @method createDeleteConfirmationModal
+     * @description Construye y configura el modal con opciones de confirmación
+     * @returns {HTMLElement} Elemento del modal de confirmación
      */
     createDeleteConfirmationModal() {
         const modal = document.createElement('div');
@@ -289,8 +312,11 @@ class ProfileManager {
     }
 
     /**
-     * Eliminar cuenta de usuario de forma permanente
+     * Elimina permanentemente la cuenta del usuario
      * @async
+     * @method deleteAccount
+     * @description Ejecuta la eliminación de la cuenta, limpia datos locales y redirige al login
+     * @returns {Promise<void>} Promesa que se resuelve cuando la cuenta ha sido eliminada
      */
     async deleteAccount() {
         try {
@@ -333,6 +359,11 @@ class ProfileManager {
     }
 }
 
+/**
+ * Inicialización del gestor de perfil
+ * @description Se ejecuta cuando el DOM está completamente cargado para inicializar
+ * el ProfileManager y el Sidebar con un pequeño retraso para asegurar la carga completa
+ */
 // Inicializar el gestor de perfil cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Inicializando ProfileManager...');
