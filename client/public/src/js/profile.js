@@ -19,7 +19,7 @@ class ProfileManager {
      * @description Inicializa el gestor de perfiles y configura los elementos del DOM
      */
     constructor() {
-        this.apiService = window.ApiService;
+        this.apiService = ApiService;
         
         this.profileForm = document.getElementById('profile-form');
         this.profileInfo = document.querySelector('.profile-info');
