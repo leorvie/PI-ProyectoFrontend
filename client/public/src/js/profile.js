@@ -1,6 +1,25 @@
+/**
+ * @fileoverview Módulo de gestión de perfiles de usuario
+ * @description Maneja la funcionalidad completa del perfil de usuario incluyendo
+ * visualización, edición, actualización y eliminación de cuentas
+ * @author Proyecto Frontend
+ * @version 1.0.0
+ * @namespace ProfileManager
+ */
+
+/**
+ * Clase para manejar todas las operaciones relacionadas con el perfil del usuario
+ * @class ProfileManager
+ * @description Gestiona la visualización, edición y eliminación del perfil de usuario
+ */
 class ProfileManager {
+    /**
+     * Constructor de la clase ProfileManager
+     * @constructor
+     * @description Inicializa el gestor de perfiles y configura los elementos del DOM
+     */
     constructor() {
-        this.apiService = window.ApiService;
+        this.apiService = ApiService;
         
         this.profileForm = document.getElementById('profile-form');
         this.profileInfo = document.querySelector('.profile-info');
@@ -14,6 +33,11 @@ class ProfileManager {
         this.loadUserProfile();
     }
 
+    /**
+     * Inicializa todos los event listeners del perfil
+     * @method initializeEventListeners
+     * @description Configura los manejadores de eventos para botones y formularios
+     */
     initializeEventListeners() {
         this.editButton?.addEventListener('click', () => this.enableEditMode());
         this.saveButton?.addEventListener('click', () => this.saveProfile());
@@ -22,6 +46,13 @@ class ProfileManager {
         this.profileForm?.addEventListener('submit', (e) => this.handleSubmit(e));
     }
 
+    /**
+     * Carga el perfil del usuario desde la API
+     * @async
+     * @method loadUserProfile
+     * @description Obtiene los datos del perfil del usuario y actualiza la interfaz
+     * @returns {Promise<void>} Promesa que se resuelve cuando el perfil se ha cargado
+     */
     async loadUserProfile() {
         try {
             this.showLoading();
@@ -35,6 +66,17 @@ class ProfileManager {
         }
     }
 
+    /**
+     * Actualiza la visualización del perfil en el DOM
+     * @method updateProfileDisplay
+     * @description Actualiza tanto los campos del formulario como la vista de información
+     * @param {Object} profile - Datos del perfil del usuario
+     * @param {string} profile.name - Nombre del usuario
+     * @param {string} profile.lastname - Apellido del usuario
+     * @param {string} profile.email - Email del usuario
+     * @param {number} profile.age - Edad del usuario
+     * @param {string} profile.createdAt - Fecha de creación de la cuenta
+     */
     updateProfileDisplay(profile) {
         // Actualizar campos del formulario
         document.getElementById('name').value = profile.name || '';
@@ -50,6 +92,11 @@ class ProfileManager {
         document.getElementById('display-created').textContent = new Date(profile.createdAt).toLocaleDateString();
     }
 
+    /**
+     * Habilita el modo de edición del perfil
+     * @method enableEditMode
+     * @description Muestra el formulario de edición y oculta la vista de información
+     */
     enableEditMode() {
         this.editMode = true;
         if (this.profileForm) this.profileForm.style.display = 'grid';
@@ -57,6 +104,11 @@ class ProfileManager {
         if (this.editButton) this.editButton.style.display = 'none';
     }
 
+    /**
+     * Deshabilita el modo de edición del perfil
+     * @method disableEditMode
+     * @description Oculta el formulario de edición y muestra la vista de información
+     */
     disableEditMode() {
         this.editMode = false;
         if (this.profileForm) this.profileForm.style.display = 'none';
@@ -64,17 +116,37 @@ class ProfileManager {
         if (this.editButton) this.editButton.style.display = 'inline-block';
     }
 
+    /**
+     * Cancela la edición del perfil
+     * @method cancelEdit
+     * @description Resetea el formulario, sale del modo edición y recarga los datos originales
+     */
     cancelEdit() {
         this.profileForm.reset();
         this.disableEditMode();
         this.loadUserProfile();
     }
 
+    /**
+     * Maneja el evento de envío del formulario
+     * @async
+     * @method handleSubmit
+     * @description Previene el comportamiento por defecto del formulario y guarda el perfil
+     * @param {Event} event - Evento de envío del formulario
+     * @returns {Promise<void>} Promesa que se resuelve cuando se ha manejado el envío
+     */
     async handleSubmit(event) {
         event.preventDefault();
         await this.saveProfile();
     }
 
+    /**
+     * Guarda los cambios del perfil del usuario
+     * @async
+     * @method saveProfile
+     * @description Valida el formulario, envía los datos a la API y actualiza la interfaz
+     * @returns {Promise<void>} Promesa que se resuelve cuando el perfil se ha guardado
+     */
     async saveProfile() {
         try {
             if (!this.validateForm()) return;
@@ -100,6 +172,12 @@ class ProfileManager {
         }
     }
 
+    /**
+     * Valida los datos del formulario de perfil
+     * @method validateForm
+     * @description Verifica que todos los campos cumplan con los requisitos mínimos
+     * @returns {boolean} True si el formulario es válido, false en caso contrario
+     */
     validateForm() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const email = document.getElementById('email').value;
@@ -130,24 +208,51 @@ class ProfileManager {
         return true;
     }
 
+    /**
+     * Muestra la pantalla de carga
+     * @method showLoading
+     * @description Hace visible el elemento de pantalla de carga
+     */
     showLoading() {
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) loadingScreen.style.display = 'flex';
     }
 
+    /**
+     * Oculta la pantalla de carga
+     * @method hideLoading
+     * @description Oculta el elemento de pantalla de carga
+     */
     hideLoading() {
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) loadingScreen.style.display = 'none';
     }
 
+    /**
+     * Muestra un mensaje de error al usuario
+     * @method showError
+     * @description Presenta un mensaje de error usando alert
+     * @param {string} message - Mensaje de error a mostrar
+     */
     showError(message) {
         alert(message);
     }
 
+    /**
+     * Muestra un mensaje de éxito al usuario
+     * @method showSuccess
+     * @description Presenta un mensaje de éxito usando alert
+     * @param {string} message - Mensaje de éxito a mostrar
+     */
     showSuccess(message) {
         alert(message);
     }
 
+    /**
+     * Confirma la eliminación de la cuenta del usuario
+     * @method confirmDeleteAccount
+     * @description Muestra un modal de confirmación para eliminar la cuenta
+     */
     confirmDeleteAccount() {
         // Crear un modal de confirmación personalizado
         const modal = this.createDeleteConfirmationModal();
@@ -155,6 +260,12 @@ class ProfileManager {
         modal.style.display = 'flex';
     }
 
+    /**
+     * Crea el modal de confirmación para eliminar cuenta
+     * @method createDeleteConfirmationModal
+     * @description Construye y configura el modal con opciones de confirmación
+     * @returns {HTMLElement} Elemento del modal de confirmación
+     */
     createDeleteConfirmationModal() {
         const modal = document.createElement('div');
         modal.className = 'delete-confirmation-modal';
@@ -200,6 +311,13 @@ class ProfileManager {
         return modal;
     }
 
+    /**
+     * Elimina permanentemente la cuenta del usuario
+     * @async
+     * @method deleteAccount
+     * @description Ejecuta la eliminación de la cuenta, limpia datos locales y redirige al login
+     * @returns {Promise<void>} Promesa que se resuelve cuando la cuenta ha sido eliminada
+     */
     async deleteAccount() {
         try {
             this.showLoading();
@@ -241,6 +359,11 @@ class ProfileManager {
     }
 }
 
+/**
+ * Inicialización del gestor de perfil
+ * @description Se ejecuta cuando el DOM está completamente cargado para inicializar
+ * el ProfileManager y el Sidebar con un pequeño retraso para asegurar la carga completa
+ */
 // Inicializar el gestor de perfil cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Inicializando ProfileManager...');

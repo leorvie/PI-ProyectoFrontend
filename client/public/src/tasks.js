@@ -1,16 +1,36 @@
-// Manejo de tareas
+/**
+ * @fileoverview Manejo de tareas - Versión simplificada del gestor de tareas
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
 import ApiService from './api.js';
 
+/**
+ * Gestor de tareas simplificado
+ * Maneja operaciones básicas de tareas y visualización
+ * @namespace TaskManager
+ */
 const TaskManager = {
+  /** @type {Array<Object>} Lista de tareas del usuario */
   tasks: [],
+  
+  /** @type {Object|null} Datos del usuario autenticado */
   user: null,
 
+  /**
+   * Inicializar el gestor de tareas
+   * @param {Object} user - Datos del usuario autenticado
+   */
   init(user) {
     this.user = user;
     this.bindEvents();
     this.loadTasks();
   },
 
+  /**
+   * Vincular eventos del DOM con los métodos del gestor
+   */
   bindEvents() {
     const taskForm = document.getElementById('task-form');
     const logoutBtn = document.getElementById('logout-btn');
@@ -19,6 +39,10 @@ const TaskManager = {
     logoutBtn.addEventListener('click', () => this.handleLogout());
   },
 
+  /**
+   * Cargar tareas del servidor y renderizar en la interfaz
+   * @async
+   */
   async loadTasks() {
     try {
       const response = await ApiService.getTasks();
@@ -32,6 +56,11 @@ const TaskManager = {
     }
   },
 
+  /**
+   * Manejar creación de nueva tarea
+   * @param {Event} e - Evento de envío del formulario
+   * @async
+   */
   async handleCreateTask(e) {
     e.preventDefault();
     const errorDiv = document.getElementById('task-error');
@@ -49,6 +78,10 @@ const TaskManager = {
     }
   },
 
+  /**
+   * Manejar logout del usuario
+   * @async
+   */
   async handleLogout() {
     try {
       await ApiService.logout();
@@ -58,6 +91,9 @@ const TaskManager = {
     App.showAuth();
   },
 
+  /**
+   * Renderizar lista de tareas en la interfaz
+   */
   renderTasks() {
     const tasksGrid = document.getElementById('tasks-grid');
     
@@ -82,11 +118,17 @@ const TaskManager = {
     tasksGrid.innerHTML = tasksHTML;
   },
 
+  /**
+   * Actualizar título con el número de tareas
+   */
   updateTasksTitle() {
     const tasksTitle = document.getElementById('tasks-title');
     tasksTitle.textContent = `Mis Tareas (${this.tasks.length})`;
   },
 
+  /**
+   * Actualizar saludo del usuario en la interfaz
+   */
   updateUserGreeting() {
     const userGreeting = document.getElementById('user-greeting');
     userGreeting.textContent = `¡Hola, ${this.user?.name || 'Usuario'}!`;

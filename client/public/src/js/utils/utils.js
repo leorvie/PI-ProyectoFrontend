@@ -1,4 +1,15 @@
-// Utilidades generales
+/**
+ * @fileoverview Funciones utilitarias generales de la aplicación
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
+/**
+ * Utilidades generales para la aplicación
+ * Proporciona funciones helper para formateo, navegación, validación y notificaciones
+ * @namespace Utils
+ */
+
 const Utils = {
   // Variables para control de notificaciones
   _lastErrorMessage: null,
@@ -6,7 +17,11 @@ const Utils = {
   _lastSuccessMessage: null,
   _lastSuccessTime: 0,
 
-  // Método genérico para formatear fechas
+   /**
+   * Formatear fecha con hora en formato local español
+   * @param {string|Date} date - Fecha a formatear
+   * @returns {string} Fecha formateada o mensaje de error
+   */
   _formatDate: function(date, options) {
     if (!date) return 'N/A';
     try {
@@ -28,7 +43,11 @@ const Utils = {
     });
   },
 
-  // Formatear solo fecha (sin hora)
+  /**
+   * Formatear solo fecha (sin hora) en formato local español
+   * @param {string|Date} date - Fecha a formatear
+   * @returns {string} Fecha formateada o mensaje de error
+   */
   formatDateOnly: function(date) {
     return this._formatDate(date, {
       year: 'numeric',
@@ -37,7 +56,11 @@ const Utils = {
     });
   },
   
-  // Formatear solo hora
+  /**
+   * Formatear solo hora en formato local español
+   * @param {string|Date} date - Fecha con hora a formatear
+   * @returns {string} Hora formateada o mensaje de error
+   */
   formatTimeOnly: function(date) {
     if (!date) return 'N/A';
     try {
@@ -61,7 +84,11 @@ const Utils = {
     return false;
   },
 
-  // Mostrar mensaje de error en elemento DOM o notificación
+  /**
+   * Mostrar mensaje de error en un elemento específico
+   * @param {string} elementId - ID del elemento donde mostrar el error
+   * @param {string} message - Mensaje de error a mostrar
+   */
   showError: function(messageOrElementId, elementIdOrMessage) {
     // Detectar si el primer parámetro es un ID de elemento
     if (typeof messageOrElementId === 'string' && arguments.length === 2) {
@@ -75,17 +102,27 @@ const Utils = {
     }
   },
 
-  // Limpiar mensaje de error
+  /**
+   * Limpiar mensaje de error de un elemento específico
+   * @param {string} elementId - ID del elemento donde limpiar el error
+   */
   clearError: function(elementId) {
     this._updateDOMElement(elementId, '', 'clear');
   },
 
-  // Navegar a una página
+  /**
+   * Navegar a una página específica
+   * @param {string} page - URL de la página a la que navegar
+   */
   navigateTo: function(page) {
     window.location.href = page;
   },
 
-  // Verificar autenticación y redirigir si es necesario
+  /**
+   * Verificar autenticación y redirigir si es necesario
+   * @returns {Promise<boolean>} True si está autenticado, false en caso contrario
+   * @async
+   */
   checkAuth: async function() {
     try {
       console.log('Verificando autenticación...');
@@ -103,7 +140,11 @@ const Utils = {
     }
   },
 
-  // Ordenar tareas por fecha de creación (más recientes primero)
+  /**
+   * Ordenar tareas por fecha de creación (más recientes primero)
+   * @param {Array<Object>} tasks - Array de tareas a ordenar
+   * @returns {Array<Object>} Array de tareas ordenado
+   */
   sortTasksByDate: function(tasks) {
     return tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   },
@@ -116,10 +157,16 @@ const Utils = {
     }
   },
 
+  /**
+   * Mostrar pantalla de carga
+   */
   showLoading: function() {
     this._toggleLoading(true);
   },
 
+  /**
+   * Ocultar pantalla de carga
+   */
   hideLoading: function() {
     this._toggleLoading(false);
   },
