@@ -1,19 +1,51 @@
+/**
+ * @fileoverview Gestor del perfil de usuario - Edición y eliminación de cuenta
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
+/**
+ * Clase que maneja la funcionalidad del perfil de usuario
+ * Permite ver, editar y eliminar la cuenta del usuario
+ * @class ProfileManager
+ */
 class ProfileManager {
+    /**
+     * Constructor del gestor de perfil
+     * Inicializa referencias DOM y configura eventos
+     */
     constructor() {
+        /** @type {Object} Referencia al servicio de API */
         this.apiService = window.ApiService;
         
+        /** @type {HTMLFormElement} Formulario de perfil */
         this.profileForm = document.getElementById('profile-form');
+        
+        /** @type {HTMLElement} Contenedor de información del perfil */
         this.profileInfo = document.querySelector('.profile-info');
+        
+        /** @type {HTMLButtonElement} Botón para editar perfil */
         this.editButton = document.getElementById('edit-profile');
+        
+        /** @type {HTMLButtonElement} Botón para guardar cambios */
         this.saveButton = document.getElementById('save-profile');
+        
+        /** @type {HTMLButtonElement} Botón para cancelar edición */
         this.cancelButton = document.getElementById('cancel-edit');
+        
+        /** @type {HTMLButtonElement} Botón para eliminar cuenta */
         this.deleteButton = document.getElementById('delete-account');
+        
+        /** @type {boolean} Indica si está en modo edición */
         this.editMode = false;
 
         this.initializeEventListeners();
         this.loadUserProfile();
     }
 
+    /**
+     * Configurar todos los event listeners del perfil
+     */
     initializeEventListeners() {
         this.editButton?.addEventListener('click', () => this.enableEditMode());
         this.saveButton?.addEventListener('click', () => this.saveProfile());
@@ -22,6 +54,10 @@ class ProfileManager {
         this.profileForm?.addEventListener('submit', (e) => this.handleSubmit(e));
     }
 
+    /**
+     * Cargar perfil del usuario desde la API
+     * @async
+     */
     async loadUserProfile() {
         try {
             this.showLoading();
@@ -35,6 +71,15 @@ class ProfileManager {
         }
     }
 
+    /**
+     * Actualizar la visualización del perfil en la interfaz
+     * @param {Object} profile - Datos del perfil del usuario
+     * @param {string} profile.name - Nombre del usuario
+     * @param {string} profile.lastname - Apellido del usuario
+     * @param {string} profile.email - Email del usuario
+     * @param {number} profile.age - Edad del usuario
+     * @param {string} profile.createdAt - Fecha de creación de la cuenta
+     */
     updateProfileDisplay(profile) {
         // Actualizar campos del formulario
         document.getElementById('name').value = profile.name || '';
@@ -50,6 +95,9 @@ class ProfileManager {
         document.getElementById('display-created').textContent = new Date(profile.createdAt).toLocaleDateString();
     }
 
+    /**
+     * Activar modo de edición del perfil
+     */
     enableEditMode() {
         this.editMode = true;
         if (this.profileForm) this.profileForm.style.display = 'grid';
@@ -57,6 +105,9 @@ class ProfileManager {
         if (this.editButton) this.editButton.style.display = 'none';
     }
 
+    /**
+     * Desactivar modo de edición del perfil
+     */
     disableEditMode() {
         this.editMode = false;
         if (this.profileForm) this.profileForm.style.display = 'none';
@@ -64,17 +115,29 @@ class ProfileManager {
         if (this.editButton) this.editButton.style.display = 'inline-block';
     }
 
+    /**
+     * Cancelar edición y restaurar datos originales
+     */
     cancelEdit() {
         this.profileForm.reset();
         this.disableEditMode();
         this.loadUserProfile();
     }
 
+    /**
+     * Manejar envío del formulario de perfil
+     * @param {Event} event - Evento de envío del formulario
+     * @async
+     */
     async handleSubmit(event) {
         event.preventDefault();
         await this.saveProfile();
     }
 
+    /**
+     * Guardar cambios del perfil en el servidor
+     * @async
+     */
     async saveProfile() {
         try {
             if (!this.validateForm()) return;
@@ -100,6 +163,10 @@ class ProfileManager {
         }
     }
 
+    /**
+     * Validar formulario de perfil
+     * @returns {boolean} True si es válido, false en caso contrario
+     */
     validateForm() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const email = document.getElementById('email').value;
@@ -130,24 +197,41 @@ class ProfileManager {
         return true;
     }
 
+    /**
+     * Mostrar pantalla de carga
+     */
     showLoading() {
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) loadingScreen.style.display = 'flex';
     }
 
+    /**
+     * Ocultar pantalla de carga
+     */
     hideLoading() {
         const loadingScreen = document.getElementById('loading-screen');
         if (loadingScreen) loadingScreen.style.display = 'none';
     }
 
+    /**
+     * Mostrar mensaje de error
+     * @param {string} message - Mensaje de error a mostrar
+     */
     showError(message) {
         alert(message);
     }
 
+    /**
+     * Mostrar mensaje de éxito
+     * @param {string} message - Mensaje de éxito a mostrar
+     */
     showSuccess(message) {
         alert(message);
     }
 
+    /**
+     * Mostrar confirmación antes de eliminar cuenta
+     */
     confirmDeleteAccount() {
         // Crear un modal de confirmación personalizado
         const modal = this.createDeleteConfirmationModal();
@@ -155,6 +239,10 @@ class ProfileManager {
         modal.style.display = 'flex';
     }
 
+    /**
+     * Crear modal de confirmación para eliminación de cuenta
+     * @returns {HTMLElement} Elemento modal de confirmación
+     */
     createDeleteConfirmationModal() {
         const modal = document.createElement('div');
         modal.className = 'delete-confirmation-modal';
@@ -200,6 +288,10 @@ class ProfileManager {
         return modal;
     }
 
+    /**
+     * Eliminar cuenta de usuario de forma permanente
+     * @async
+     */
     async deleteAccount() {
         try {
             this.showLoading();

@@ -1,7 +1,27 @@
-// Funciones para manejo de tareas
+/**
+ * @fileoverview Funciones para manejo de tareas - Modales de edición y eliminación
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
+/**
+ * Objeto que maneja las operaciones de tareas (editar, eliminar, validar)
+ * Controla modales y formularios de edición de tareas
+ * @namespace TaskManagement
+ */
 const TaskManagement = {
+    /** @type {string|null} ID de la tarea actualmente seleccionada */
     currentTaskId: null,
 
+    /**
+     * Mostrar modal de edición de tarea con datos prellenados
+     * @param {Object} task - Objeto tarea con todos sus datos
+     * @param {string} task._id - ID único de la tarea
+     * @param {string} task.title - Título de la tarea
+     * @param {string} [task.details] - Descripción de la tarea
+     * @param {string} task.status - Estado de la tarea
+     * @param {string} [task.date] - Fecha límite de la tarea
+     */
     showEditModal(task) {
         const modal = document.getElementById('edit-task-modal');
         const form = document.getElementById('edit-task-form');
@@ -55,24 +75,39 @@ const TaskManagement = {
         modal.style.display = 'flex';
     },
 
+    /**
+     * Ocultar modal de edición de tareas
+     */
     hideEditModal() {
         const modal = document.getElementById('edit-task-modal');
         modal.style.display = 'none';
         this.currentTaskId = null;
     },
 
+    /**
+     * Mostrar modal de confirmación de eliminación
+     * @param {string} taskId - ID de la tarea a eliminar
+     */
     showDeleteModal(taskId) {
         const modal = document.getElementById('delete-task-modal');
         this.currentTaskId = taskId;
         modal.style.display = 'flex';
     },
 
+    /**
+     * Ocultar modal de confirmación de eliminación
+     */
     hideDeleteModal() {
         const modal = document.getElementById('delete-task-modal');
         modal.style.display = 'none';
         this.currentTaskId = null;
     },
 
+    /**
+     * Actualizar contador de caracteres para campos de texto
+     * @param {HTMLInputElement} input - Campo de entrada de texto
+     * @param {number} maxLength - Límite máximo de caracteres
+     */
     updateCharCounter(input, maxLength) {
         const counter = input.nextElementSibling;
         const length = input.value.length;
@@ -88,7 +123,9 @@ const TaskManagement = {
         }
     },
 
-    // Configurar validación para el modal de edición
+    /**
+     * Configurar validación para el modal de edición
+     */
     setupEditValidation() {
         const titleInput = document.getElementById('edit-title');
         const dateInput = document.getElementById('edit-date');
@@ -107,7 +144,9 @@ const TaskManagement = {
         this.validateEditForm();
     },
 
-    // Validar formulario de edición
+    /**
+     * Validar formulario de edición de tareas
+     */
     validateEditForm() {
         const titleInput = document.getElementById('edit-title');
         const dateInput = document.getElementById('edit-date');
@@ -144,6 +183,11 @@ const TaskManagement = {
         }
     },
 
+    /**
+     * Manejar envío del formulario de edición de tareas
+     * @param {Event} e - Evento de envío del formulario
+     * @async
+     */
     async handleEditSubmit(e) {
         e.preventDefault();
         const form = e.target;
@@ -237,6 +281,11 @@ const TaskManagement = {
         }
     },
 
+    /**
+     * Eliminar tarea seleccionada
+     * @param {Event} e - Evento de confirmación de eliminación
+     * @async
+     */
     async deleteTask(e) {
         e.preventDefault();
         try {
@@ -250,6 +299,9 @@ const TaskManagement = {
         }
     },
 
+    /**
+     * Vincular eventos del DOM con los métodos del gestor
+     */
     bindEvents() {
         // NO hacer bind de eventos si estamos en el dashboard
         // El dashboard maneja sus propios eventos
@@ -289,6 +341,9 @@ const TaskManagement = {
         }
     },
 
+    /**
+     * Inicializar el gestor de tareas
+     */
     init() {
         this.bindEvents();
     }

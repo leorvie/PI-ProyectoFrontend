@@ -1,12 +1,36 @@
-// Manejo del dashboard
+/**
+ * @fileoverview Manejo del dashboard principal - Vista de tareas y filtros
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
 document.addEventListener('DOMContentLoaded', async () => {
+    /**
+     * Gestor del dashboard principal de la aplicación
+     * Maneja visualización de tareas, filtros, vistas Kanban/Lista y operaciones CRUD
+     * @namespace DashboardManager
+     */
     const DashboardManager = {
+        /** @type {Array<Object>} Array de tareas del usuario */
         tasks: [],
+        
+        /** @type {Object|null} Datos del usuario autenticado */
         user: null,
+        
+        /** @type {string} Filtro actual aplicado ('all', 'pendiente', 'en-progreso', 'completada') */
         currentFilter: 'all',
+        
+        /** @type {string} Vista actual ('kanban' o 'list') */
         currentView: 'kanban', // Vista por defecto Kanban
+        
+        /** @type {string|null} ID de la tarea actualmente en edición/eliminación */
         currentTaskId: null, // Para tracking de la tarea actual en edición/eliminación
 
+        /**
+         * Inicializar el dashboard
+         * Verifica autenticación, carga perfil y tareas, configura eventos
+         * @async
+         */
         async init() {
             // Verificar autenticación
             const isAuthenticated = await Utils.checkAuth();
@@ -18,6 +42,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.hideLoading();
         },
 
+        /**
+         * Cargar perfil del usuario autenticado desde la API
+         * @async
+         */
         async loadUserProfile() {
             try {
                 const userData = await window.ApiService.getProfile();
@@ -29,6 +57,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Actualizar saludo personalizado en el dashboard
+         */
         updateUserGreeting() {
             const greeting = document.getElementById('user-greeting');
             if (greeting && this.user) {
@@ -37,6 +68,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Cargar todas las tareas del usuario desde la API
+         * @async
+         */
         async loadTasks() {
             try {
                 this.tasks = await window.ApiService.getTasks();
@@ -48,6 +83,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Configurar event listeners para filtros y cambios de vista
+         */
         bindEvents() {
             const filterBtns = document.querySelectorAll('.filter-btn');
             const viewBtns = document.querySelectorAll('.view-btn');
@@ -61,6 +99,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         },
 
+        /**
+         * Manejar cambio de vista entre Kanban y Lista
+         * @param {Event} e - Evento del botón de vista clickeado
+         */
         handleViewChange(e) {
             const view = e.target.closest('.view-btn').dataset.view;
             this.currentView = view;
@@ -86,6 +128,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.renderTasks();
         },
 
+        /**
+         * Manejar filtrado de tareas por estado
+         * @param {Event} e - Evento del botón de filtro clickeado
+         */
         handleFilter(e) {
             const filter = e.target.dataset.filter;
             this.currentFilter = filter;
@@ -99,6 +145,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.renderTasks();
         },
 
+        /**
+         * Obtener tareas filtradas según el filtro actual
+         * @returns {Array<Object>} Array de tareas filtradas
+         */
         getFilteredTasks() {
             if (this.currentFilter === 'all') {
                 return this.tasks;
@@ -106,6 +156,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             return this.tasks.filter(task => task.status === this.currentFilter);
         },
 
+        /**
+         * Renderizar tareas según la vista actual (Kanban o Lista)
+         */
         renderTasks() {
             if (this.currentView === 'kanban') {
                 this.renderKanbanView();
@@ -114,6 +167,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Renderizar vista Kanban con columnas por estado
+         */
         renderKanbanView() {
             const statuses = ['Por Hacer', 'Haciendo', 'Hecho'];
             
@@ -146,6 +202,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.bindTaskEvents();
         },
 
+        /**
+         * Renderizar vista de lista con tareas ordenadas
+         */
         renderListView() {
             const tasksContainer = document.getElementById('list-view');
             const filteredTasks = this.getFilteredTasks();
@@ -162,6 +221,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             this.bindTaskEvents();
         },
 
+        /**
+         * Crear HTML para tarjeta de tarea en vista Kanban
+         * @param {Object} task - Objeto de tarea
+         * @returns {string} HTML de la tarjeta de tarea
+         */
         createKanbanTaskHTML(task) {
             const createdDate = new Date(task.createdAt || task.updatedAt).toLocaleDateString('es-ES');
             
@@ -209,6 +273,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         },
 
+        /**
+         * Obtener HTML para estado vacío cuando no hay tareas
+         * @returns {string} HTML del estado vacío
+         */
         getEmptyStateHTML() {
             return `
                 <div class="empty-state">
@@ -219,6 +287,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         },
 
+        /**
+         * Crear HTML para tarjeta de tarea en vista de lista
+         * @param {Object} task - Objeto de tarea
+         * @returns {string} HTML de la tarjeta de tarea
+         */
         createTaskHTML(task) {
             const isCompleted = task.status === 'Hecho';
             return `
@@ -242,6 +315,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
         },
 
+        /**
+         * Vincular eventos a los botones de acción de tareas
+         */
         bindTaskEvents() {
             // Toggle status
             document.querySelectorAll('.toggle-status').forEach(btn => {
@@ -259,6 +335,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         },
 
+        /**
+         * Alternar estado de una tarea entre completada y pendiente
+         * @param {Event} e - Evento del elemento clickeado
+         * @async
+         */
         async toggleTaskStatus(e) {
             // Buscar el elemento contenedor de la tarea (funciona para lista y kanban)
             const taskElement = e.target.closest('.task-item, .kanban-task');
@@ -290,6 +371,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Eliminar una tarea después de confirmación del usuario
+         * @param {Event} e - Evento del elemento clickeado
+         * @async
+         */
         async deleteTask(e) {
             // Buscar el elemento contenedor de la tarea (funciona para lista y kanban)
             const taskElement = e.target.closest('.task-item, .kanban-task');
@@ -319,6 +405,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Abrir modal de edición para una tarea
+         * @param {Event} e - Evento del elemento clickeado
+         */
         editTask(e) {
             const taskElement = e.target.closest('[data-task-id]');
             const taskId = taskElement.dataset.taskId;
@@ -435,6 +525,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         },
 
+        /**
+         * Ocultar pantalla de carga
+         */
         hideLoading() {
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {

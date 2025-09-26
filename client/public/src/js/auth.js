@@ -1,7 +1,25 @@
-// Manejo de autenticación
+/**
+ * @fileoverview Manejo de autenticación - Login y registro de usuarios
+ * @author Equipo de Desarrollo
+ * @version 1.0.0
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
+    /**
+     * Gestor de autenticación que maneja login, registro y validación de formularios
+     * @namespace AuthManager
+     */
     const AuthManager = {
+        /**
+         * Indica si está en modo login (true) o registro (false)
+         * @type {boolean}
+         */
         isLoginMode: true,
+        
+        /**
+         * Estado de validación de cada campo del formulario
+         * @type {Object<string, boolean>}
+         */
         validationState: {
             firstName: false,
             lastName: false,
@@ -11,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmPassword: false
         },
 
+        /**
+         * Inicializar el gestor de autenticación
+         * Configura eventos, validaciones y verifica si viene de logout
+         */
         init() {
             console.log('AuthManager iniciando...');
             this.bindEvents();
@@ -27,6 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
+        /**
+         * Verificar si el usuario viene de hacer logout
+         * Limpia cookies y muestra mensaje apropiado
+         * @returns {boolean} True si viene de logout, false en caso contrario
+         */
         checkLogoutMessage() {
             // Verificar si viene de un logout
             const urlParams = new URLSearchParams(window.location.search);
@@ -50,6 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return false; // No viene de logout
         },
 
+        /**
+         * Mostrar mensaje de confirmación de logout exitoso
+         * Aplica estilos de éxito y limpia el mensaje automáticamente
+         */
         showLogoutMessage() {
             const errorDiv = document.getElementById('auth-error');
             if (errorDiv) {
@@ -72,6 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
+        /**
+         * Verificar si existe autenticación válida previa
+         * Redirige al dashboard si el token es válido
+         * @async
+         */
         async checkExistingAuth() {
             console.log('Verificando token existente...');
             // Esperar a que ApiService esté disponible
@@ -95,6 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
+        /**
+         * Configurar event listeners principales del formulario de autenticación
+         */
         bindEvents() {
             const authForm = document.getElementById('auth-form');
             const switchBtn = document.getElementById('switch-mode');
@@ -103,6 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
             switchBtn.addEventListener('click', () => this.toggleMode());
         },
 
+        /**
+         * Configurar validación en tiempo real para todos los campos
+         */
         setupValidation() {
             const fields = ['firstName', 'lastName', 'age', 'email', 'password', 'confirmPassword'];
             
@@ -115,6 +157,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         },
 
+        /**
+         * Validar un campo específico del formulario
+         * @param {string} fieldId - ID del campo a validar
+         * @returns {boolean} True si el campo es válido, false en caso contrario
+         */
         validateField(fieldId) {
             const field = document.getElementById(fieldId);
             const errorDiv = document.getElementById(`${fieldId}-error`);
@@ -191,6 +238,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return isValid;
         },
 
+        /**
+         * Actualizar estado del botón de envío según validación de campos
+         */
         updateSubmitButton() {
             const submitBtn = document.getElementById('auth-submit');
             const requiredFields = this.isLoginMode 
@@ -203,6 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.classList.toggle('disabled', !allValid);
         },
 
+        /**
+         * Manejar envío del formulario de autenticación
+         * @param {Event} e - Evento de envío del formulario
+         * @async
+         */
         async handleSubmit(e) {
             e.preventDefault();
             console.log('Form submitted, mode:', this.isLoginMode);
@@ -286,11 +341,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
 
+        /**
+         * Alternar entre modo login y registro
+         */
         toggleMode() {
             this.isLoginMode = !this.isLoginMode;
             this.updateUI();
         },
 
+        /**
+         * Actualizar interfaz según el modo actual (login/registro)
+         */
         updateUI() {
             const title = document.getElementById('auth-title');
             const submitBtn = document.getElementById('auth-submit');
