@@ -250,12 +250,21 @@ const ApiService = {
       body: JSON.stringify({ email })
     });
   },
+
+  /**
+   * Restablecer contraseña usando token de recuperación
+   * @async
+   * @param {string} userId - ID del usuario
+   * @returns {Promise<Object>} Confirmación de eliminación
+   * @throws {Error} Error si el usuario no existe o no se puede eliminar
+  */
   async deleteUser(userId) {
     return await this.request(`/user/${userId}`, {
       method: 'DELETE'
     });
   }
 };
+
 
 
 // Hacer ApiService disponible globalmente
