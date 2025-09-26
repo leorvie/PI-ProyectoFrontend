@@ -299,9 +299,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="task-header">
                         <h3 class="task-title ${isCompleted ? 'completed' : ''}">${task.title}</h3>
                         <div class="task-actions">
-                            <button class="btn-icon toggle-status" title="${isCompleted ? 'Marcar como pendiente' : 'Marcar como completada'}">
-                                ${isCompleted ? '↶' : '✓'}
-                            </button>
                             <button class="btn-icon edit-task" title="Editar tarea">✏️</button>
                             <button class="btn-icon delete-task" title="Eliminar tarea">🗑️</button>
                         </div>
