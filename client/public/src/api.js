@@ -94,7 +94,7 @@ async resetPassword(token, newPassword) {
     body: JSON.stringify({ password: newPassword }),
   });
 },
-
+  // Autenticación y perfil
   async verifyToken() {
     return await this.request('/verify');
   },
@@ -103,6 +103,12 @@ async resetPassword(token, newPassword) {
     return await this.request('/profile');
   },
 
+  async updateProfile(profileData) {
+    return await this.request('/profile/edit', {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+  },
 
   // Métodos de tareas
   async getTasks() {
@@ -118,7 +124,15 @@ async resetPassword(token, newPassword) {
 
   async getTask(id) {
     return await this.request(`/tasks/${id}`);
+  },
+
+  // Eliminar usuario
+  async deleteUser(userId) {
+    return await this.request(`/user/${userId}`, {
+      method: 'DELETE'
+    });
   }
 };
 
-export default ApiService;
+// Hacer ApiService disponible globalmente
+window.ApiService = ApiService;

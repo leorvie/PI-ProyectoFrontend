@@ -38,6 +38,12 @@
                     </svg>
                     Mi Perfil
                 </a>
+                <a href="about.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20zm0 15h0v2h0v-2zm0-11c2 0 4 1 4 3 0 2-2 3-3 4s-1 2-1 3h-2c0-2 1-3 2-4s2-1 2-3c0-1-1-2-2-2s-2 1-2 2H8c0-2 2-3 4-3z"></path>
+                    </svg>
+                    Sobre nosotros
+                </a>
             </div>
             
             <div class="sidebar-footer">
@@ -106,7 +112,10 @@
                             <label>Miembro desde:</label>
                             <p id="display-created"></p>
                         </div>
-                        <button class="btn btn-tertiary" id="edit-profile">Editar Perfil</button>
+                        <div class="profile-actions">
+                            <button class="btn btn-tertiary" id="edit-profile">Editar Perfil</button>
+                            <button class="btn btn-danger" id="delete-account">Eliminar Cuenta</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -120,8 +129,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="./src/js/services/api.js"></script>
-    <script src="./src/js/utils/utils.js"></script>
+    <script src="./src/api.js"></script>
     <script src="./src/js/utils/sidebar.js"></script>
     <script src="./src/js/profile.js"></script>
 </body>

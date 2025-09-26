@@ -1,0 +1,87 @@
+/* Estilos para fecha y hora */
+.date-time-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+
+.date-input {
+  flex: 2;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: inherit;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.2s;
+}
+
+.time-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: inherit;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.2s;
+}
+
+.date-input:focus,
+.time-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* Estilos para la fecha de vencimiento en el kanban */
+.kanban-task-due-date {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: rgba(79, 70, 229, 0.1);
+  color: var(--primary-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kanban-task-due-date.overdue {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: var(--danger-color);
+}
+
+.kanban-task-due-date svg {
+  flex-shrink: 0;
+}
+
+/* Estilos para iconos de tareas */
+.task-icon {
+  fill: currentColor;
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+
+/* Estilos responsive para móvil */
+@media (max-width: 576px) {
+  .date-time-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .date-input,
+  .time-input {
+    width: 100%;
+  }
+  
+  .kanban-task-due-date {
+    font-size: 0.7rem;
+  }
+}
